@@ -8,9 +8,9 @@
     <script type="text/javascript"  src="{{ url_for('static', filename='scripts.js') }}"></script>
 </head>
 <body>
-    <div id="main-message">{{ main_message }}</div>
-    <div id="auth">
-        <span id="auth_message"></span>
+    <button id="sign_out" {% if not email %}hidden{% endif %}>Sign out</button>
+    <div id="auth" {% if email %}hidden{% endif %}>
+        <span id="auth_message">{{ text }}</span>
         <input type="text" name="email" placeholder="Email" />
         <input type="password" name="password" placeholder="Password" />
         <button id="sign_in" class="auth-button">Sign in</button>

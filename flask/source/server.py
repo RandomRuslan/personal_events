@@ -13,13 +13,19 @@ users = {}
 
 @app.route('/', methods=['GET'])
 def main():
+    text = None
     if session.get('user'):
         email = session['user']
-        main_message = f'Hello, {email}'
     else:
-        main_message = 'You should sign in'
+        text = 'You should sign in'
+        email = None
 
-    return make_response(render_template('index.html', **{'main_message': main_message}))
+    response = {
+        'email': email,
+        'text': text
+    }
+    print(response)
+    return make_response(render_template('index.html', **response))
 
 
 @app.route('/signin', methods=['POST'])
@@ -36,7 +42,7 @@ def sign_in():
         return {'error': True, 'text': error_text}
 
     session['user'] = email
-    return {'error': False, 'text':  f'Welcome back, {email}!'}
+    return {'error': False, 'text':  f'Welcome back, {email}!', 'email': email}
 
 
 @app.route('/signup', methods=['POST'])
@@ -55,43 +61,13 @@ def sign_up():
         return {'error': True, 'text': 'Somesing went wrong. Try again'}
 
     session['user'] = email
-    return {'error': False, 'text': f'Welcome, {email}!'}
+    return {'error': False, 'text': f'Welcome, {email}!', 'email': email}
 
 
-@app.route('/', methods=['POST'])
-def post():
-    email = request.form.get('email')
-    password = request.form.get('password')
-
-    text = ''
-    error = False
-    response = {'error': False}
-
-    if not email or not password:
-        error = True
-        text = 'Auth data is required!'
-        return response
-
-    hash_password = get_hash_password(password)
-
-    if email in users:
-        print(email, users[email], session.get('user'))
-        if users[email][0] == hash_password:
-            session['user'] = email
-            users[email][1] += 1
-            text = 'Welcome back, {}. {} times'.format(email, users[email][1])
-        else:
-            error = True
-            text = 'Wrong username/password'
-    else:
-        users[email] = [hash_password, 0]
-        session['user'] = email
-        text = 'Hello, {}'.format(email)
-
-    return {
-        'error': error,
-        'text': text
-    }
+@app.route('/signout', methods=['POST'])
+def sign_out():
+    session.pop('user', None)
+    return {'text': 'You should sign in'}
 
 
 if __name__ == '__main__':

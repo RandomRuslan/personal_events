@@ -23,15 +23,20 @@ input {
     font-size: 20px;
 }
 
+#sign_out {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    width: 70px;
+    height: 50px;
+}
+
 .auth-button {
     display: inline-block;
     background-color: lightpink;
     width: 45%;
     height: 50px;
-}
-
-#auth_message {
-    display: none;
 }
 
 .events-wrapper {
