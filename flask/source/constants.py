@@ -6,3 +6,5 @@ DB_NAME = 'personal_events'
 DB_USER = 'postgres'
 DB_PWD = 'password'
 DB_URL = f'postgresql://{DB_USER}:{DB_PWD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+
+PWD_SALT = 'k32jb4k2j3'

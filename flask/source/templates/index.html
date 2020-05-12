@@ -2,17 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{text}}</title>
+    <title>Personal events</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script type="text/javascript"  src="{{ url_for('static', filename='jquery.js') }}"></script>
     <script type="text/javascript"  src="{{ url_for('static', filename='scripts.js') }}"></script>
 </head>
 <body>
+    <div id="main-message">{{ main_message }}</div>
     <div id="auth">
         <span id="auth_message"></span>
-        <input type="text" name="username" placeholder="Name" />
+        <input type="text" name="email" placeholder="Email" />
         <input type="password" name="password" placeholder="Password" />
-        <button id="auth_button">AUTH</button>
+        <button id="sign_in" class="auth-button">Sign in</button>
+        <button id="sign_up" class="auth-button">Sign up</button>
+    </div>
+    <div class="events-wrapper">
+        <div class="event-card">
+            <div class="event-title"></div>
+            <div class="event-note"></div>
+            <div class="event-date"></div>
+        </div>
     </div>
 </body>
 </html>

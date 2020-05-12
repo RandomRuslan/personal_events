@@ -23,12 +23,27 @@ input {
     font-size: 20px;
 }
 
-button {
-    background-color: hotpink;
-    width: 200px;
-    height: 70px;
+.auth-button {
+    display: inline-block;
+    background-color: lightpink;
+    width: 45%;
+    height: 50px;
 }
 
 #auth_message {
     display: none;
+}
+
+.events-wrapper {
+    width: 100%;
+    text-align: center;
+    background-color: dimgray;
+}
+
+.event-card {
+    display: inline-block;
+    width: 60%;
+    margin: auto 15px;
+    padding: 10px 15px;
+    background-color: hotpink;
 }
