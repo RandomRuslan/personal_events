@@ -32,7 +32,7 @@ span.error {
     background-color: greenyellow;
 }
 
-input {
+#auth input {
     display: block;
     margin: 15px auto;
     height: 50px;
@@ -68,6 +68,40 @@ input {
     width: 100%;
     height: calc(100vh - 75px);
     background-color: rgba(0,0,0,0.2);
+}
+
+#new_event {
+    position: relative;
+    width: 65%;
+    margin: auto;
+    padding: 15px;
+    text-align: left;
+    background-color: aqua;
+}
+
+#new_event > * {
+    font-size: 20px;
+    font-family: monospace;
+    color: gray;
+}
+
+#new_event input {
+    display: block;
+    width: 60%;
+    margin: 10px 0;
+    height: 26px;
+    padding: 0 0;
+}
+
+#new_event .new-date {
+    width: auto;
+}
+
+#new_event textarea {
+    display: block;
+    width: calc(100% - 6px);
+    height: 400px;
+    resize: none;
 }
 
 .event-card {
