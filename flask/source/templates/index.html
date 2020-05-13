@@ -8,20 +8,26 @@
     <script type="text/javascript"  src="{{ url_for('static', filename='scripts.js') }}"></script>
 </head>
 <body>
-    <button id="sign_out" {% if not email %}hidden{% endif %}>Sign out</button>
-    <div id="auth" {% if email %}hidden{% endif %}>
-        <span id="auth_message">{{ text }}</span>
-        <input type="text" name="email" placeholder="Email" />
-        <input type="password" name="password" placeholder="Password" />
-        <button id="sign_in" class="auth-button">Sign in</button>
-        <button id="sign_up" class="auth-button">Sign up</button>
+    <div id="auth_wrapper">
+        <button id="sign_out" {% if not email %}hidden{% endif %}>Sign out</button>
+        <div id="auth" {% if email %}hidden{% endif %}>
+            <span id="auth_message">{{ text }}</span>
+            <input type="text" name="email" placeholder="Email" />
+            <input type="password" name="password" placeholder="Password" />
+            <button id="sign_in" class="auth-button">Sign in</button>
+            <button id="sign_up" class="auth-button">Sign up</button>
+        </div>
     </div>
-    <div class="events-wrapper">
+    <div id="events_wrapper">
+        <div id="new_event_overlay">
+
+        </div>
         <div class="event-card">
             <div class="event-title"></div>
             <div class="event-note"></div>
             <div class="event-date"></div>
         </div>
+        <button id="add_event">+</button>
     </div>
 </body>
 </html>

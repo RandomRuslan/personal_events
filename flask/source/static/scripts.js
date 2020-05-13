@@ -16,28 +16,16 @@ let auth = {
 
         this.signOutButton = $('#sign_out');
 
-        this.eventCardTemplate = $('.event-card').remove();
-
-        this.signInButton.click(this.signIn.bind(this));
-        this.signUpButton.click(this.signUp.bind(this));
+        this.signInButton.click(function () { this.authRequest('/signin') }.bind(this));
+        this.signUpButton.click(function () { this.authRequest('/signup') }.bind(this));
         this.signOutButton.click(this.signOut.bind(this));
+        return this;
     },
 
-    signIn: function() {
+    authRequest: function(method) {
         let data = this.getAuthData();
         if (data) {
-            $.post('/signin', data, function (responseData) {
-                this.afterAuth(responseData);
-            }.bind(this))
-        }
-    },
-
-    signUp: function() {
-        let data = this.getAuthData();
-        if (data) {
-            $.post('/signup', data, function (responseData) {
-                this.afterAuth(responseData);
-            }.bind(this))
+            $.post(method, data, this.afterAuth.bind(this));
         }
     },
 
@@ -73,14 +61,41 @@ let auth = {
     signOut: function () {
         $.post('/signout', {}, function (responseData) {
             console.log(responseData);
-            this.authBlock.show()
-            this.signOutButton.hide()
+            this.authBlock.show();
+            this.signOutButton.hide();
             this.authMessage.text(responseData.text);
-        }.bind(this))
+        }.bind(this));
+    }
+}
 
+let events = {
+    authBlock: null,
+
+    eventsWrapper: null,
+    newEventOverlay: null,
+    eventCardTemplate: null,
+    
+    init: function (authBlock) {
+        this.authBlock = authBlock;
+        this.eventsWrapper = $('#events_wrapper');
+        this.newEventOverlay = $('#new_event_overlay', this.eventsWrapper);
+        this.eventCardTemplate = $('.event-card', this.eventsWrapper).remove();
+
+        this.addButton = $('#add_event', this.eventsWrapper);
+        this.addButton.click(this.addEvent.bind(this));
+    },
+
+    addEvent: function () {
+        console.log('add button', this.newEventOverlay.is(':visible'));
+        if (this.newEventOverlay.is(':visible')) {
+            this.newEventOverlay.hide();
+        } else {
+            this.newEventOverlay.show();
+        }
     }
 }
 
 $(document).ready(function () {
-    auth.init();
+    let authBlock = auth.init();
+    events.init(authBlock);
 })

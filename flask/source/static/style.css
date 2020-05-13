@@ -1,3 +1,13 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-image: radial-gradient(ellipse farthest-corner at right bottom, #adc0ce 0%, #b88eec 50%, #E4E4E4 100%);
+}
+
 .error {
     border: 1px solid red;
 }
@@ -5,6 +15,13 @@
 span.error {
     color: red;
     border: none;
+}
+
+#auth_wrapper {
+    min-height: 45px;
+    padding: 15px;
+    text-align: center;
+    background-color: rgba(192, 192, 192, 0.8);
 }
 
 #auth {
@@ -25,8 +42,8 @@ input {
 
 #sign_out {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 10px;
+    right: 10px;
     background-color: red;
     width: 70px;
     height: 50px;
@@ -39,10 +56,18 @@ input {
     height: 50px;
 }
 
-.events-wrapper {
+#events_wrapper {
+    position: relative;
     width: 100%;
+    min-height: 60px;
     text-align: center;
-    background-color: dimgray;
+}
+
+#new_event_overlay {
+    display: none;
+    width: 100%;
+    height: calc(100vh - 75px);
+    background-color: rgba(0,0,0,0.2);
 }
 
 .event-card {
@@ -51,4 +76,13 @@ input {
     margin: auto 15px;
     padding: 10px 15px;
     background-color: hotpink;
+}
+
+#add_event {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: forestgreen;
+    width: 70px;
+    height: 50px;
 }
