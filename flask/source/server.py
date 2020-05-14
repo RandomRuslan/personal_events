@@ -69,6 +69,10 @@ def sign_out():
     session.pop('user', None)
     return {'text': 'You should sign in'}
 
+@app.route('/add_event', methods=['POST'])
+def add_event():
+    return {'text': 'OK'}
+
 
 if __name__ == '__main__':
     db_conn = DBConnecter()

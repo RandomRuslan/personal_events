@@ -24,7 +24,13 @@ span.error {
     background-color: rgba(192, 192, 192, 0.8);
 }
 
-#auth {
+#auth_wrapper:not(.no-auth) #auth,
+#auth_wrapper.no-auth #sign_out,
+#auth_wrapper.no-auth ~ #events_wrapper {
+    display: none;
+}
+
+.no-auth #auth {
     width: 50%;
     margin: auto;
     padding: 10px;
@@ -104,6 +110,17 @@ span.error {
     resize: none;
 }
 
+#new_event .close-button {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+}
+
+#new_event .close-button:hover {
+    color: red;
+    cursor: pointer;
+}
+
 .event-card {
     display: inline-block;
     width: 60%;
@@ -112,7 +129,7 @@ span.error {
     background-color: hotpink;
 }
 
-#add_event {
+#show_new_event {
     position: absolute;
     top: 10px;
     right: 10px;

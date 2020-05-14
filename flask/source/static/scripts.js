@@ -1,4 +1,29 @@
+function getFieldsData(wrapper) {
+    let emptyError = false;
+    let data = {}
+
+    $('input, textarea', wrapper).each(function() {
+        let el = $(this);
+        if (!el.val()) {
+            el.addClass('error');
+            emptyError = true;
+        } else {
+            el.removeClass('error');
+            data[el.attr('name')] = el.val()
+        }
+    })
+
+    return !emptyError ? data : null;
+}
+
+function flushFields(wrapper) {
+    $('input, textarea', wrapper).each(function() {
+        $(this).removeClass('error').val('');
+    });
+}
+
 let auth = {
+    authWrapper: null,
     authBlock: null,
     signInButton: null,
     signUpButton: null,
@@ -9,7 +34,8 @@ let auth = {
     eventCardTemplate: null,
 
     init: function () {
-        this.authBlock = $('#auth');
+        this.authWrapper = $('#auth_wrapper');
+        this.authBlock = $('#auth', this.authWrapper);
         this.signInButton = $('#sign_in', this.authBlock);
         this.signUpButton = $('#sign_up', this.authBlock);
         this.authMessage = $('#auth_message', this.authBlock);
@@ -23,28 +49,10 @@ let auth = {
     },
 
     authRequest: function(method) {
-        let data = this.getAuthData();
+        let data = getFieldsData(this.authBlock);
         if (data) {
             $.post(method, data, this.afterAuth.bind(this));
         }
-    },
-
-    getAuthData: function () {
-        let emptyError = false;
-        let data = {}
-
-        $('input', this.authBlock).each(function() {
-            let el = $(this);
-            if (!el.val()) {
-                el.addClass('error');
-                emptyError = true;
-            } else {
-                el.removeClass('error');
-                data[el.attr('name')] = el.val()
-            }
-        })
-
-        return !emptyError ? data : null;
     },
 
     afterAuth: function(responseData) {
@@ -53,49 +61,67 @@ let auth = {
         if (responseData.error) {
             this.authMessage.text(responseData.text);
         } else {
-            this.authBlock.hide();
-            this.signOutButton.show();
+            this.authWrapper.removeClass('no-auth');
         }
     },
 
     signOut: function () {
         $.post('/signout', {}, function (responseData) {
-            console.log(responseData);
-            this.authBlock.show();
-            this.signOutButton.hide();
-            this.authMessage.text(responseData.text);
+            flushFields(this.newEventWrapper);
+            this.authWrapper.addClass('no-auth');
         }.bind(this));
     }
 }
 
 let events = {
-    authBlock: null,
-
     eventsWrapper: null,
     newEventOverlay: null,
+    newEventWrapper: null,
     eventCardTemplate: null,
+    showNewEventButton: null,
+    addEventButton: null,
+    closeNewEventButton: null,
     
-    init: function (authBlock) {
-        this.authBlock = authBlock;
+    init: function () {
         this.eventsWrapper = $('#events_wrapper');
         this.newEventOverlay = $('#new_event_overlay', this.eventsWrapper);
+        this.newEventWrapper = $('#new_event', this.newEventOverlay);
         this.eventCardTemplate = $('.event-card', this.eventsWrapper).remove();
 
-        this.addButton = $('#add_event', this.eventsWrapper);
-        this.addButton.click(this.addEvent.bind(this));
+        this.showNewEventButton = $('#show_new_event', this.eventsWrapper);
+        this.showNewEventButton.click(this.showNewEvent.bind(this));
+
+        this.addEventButton = $('#add_event', this.newEventOverlay);
+        this.addEventButton.click(this.addEvent.bind(this));
+
+        this.closeNewEventButton = $('.close-button', this.newEventOverlay);
+        this.closeNewEventButton.click(this.closeNewEvent.bind(this));
+    },
+
+    showNewEvent: function () {
+        this.newEventOverlay.show();
+        this.showNewEventButton.hide();
+    },
+
+    closeNewEvent: function () {
+        flushFields(this.newEventWrapper);
+        this.newEventOverlay.hide();
+        this.showNewEventButton.show();
     },
 
     addEvent: function () {
-        console.log('add button', this.newEventOverlay.is(':visible'));
-        if (this.newEventOverlay.is(':visible')) {
-            this.newEventOverlay.hide();
-        } else {
-            this.newEventOverlay.show();
+        let data = getFieldsData(this.newEventWrapper);
+        if (data) {
+            $.post('/add_event', {}, function (responseData) {
+                console.log(responseData);
+                this.newEventOverlay.hide();
+                this.closeNewEvent();
+            }.bind(this));
         }
     }
 }
 
 $(document).ready(function () {
-    let authBlock = auth.init();
-    events.init(authBlock);
+    auth.init();
+    events.init();
 })
