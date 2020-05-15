@@ -3,7 +3,7 @@ from flask import Flask, make_response, request, render_template, session
 from constants import FLASK_SECRET_KEY
 from pe_db import DBConnecter, create_tables
 from pe_manage import Manager
-from pe_utils import get_hash_password
+from pe_utils import get_hash
 
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
@@ -22,7 +22,8 @@ def main():
 
     response = {
         'email': email,
-        'text': text
+        'text': text,
+        'events': manager.get_events(email) if email else []
     }
     print(response)
     return make_response(render_template('index.html', **response))
@@ -37,13 +38,18 @@ def sign_in():
     if validation_error:
         return {'error': True, 'text': validation_error}
 
-    hash_password = get_hash_password(password)
+    hash_password = get_hash(password, True)
     error_text = manager.check_user_error(email, hash_password)
     if error_text:
         return {'error': True, 'text': error_text}
 
     session['user'] = email
-    return {'error': False, 'text':  f'Welcome back, {email}!', 'email': email}
+    return {
+        'error': False,
+        'text':  f'Welcome back, {email}!',
+        'email': email,
+        'events': manager.get_events(email)
+    }
 
 
 @app.route('/signup', methods=['POST'])
@@ -55,10 +61,10 @@ def sign_up():
     if validation_error:
         return {'error': True, 'text': validation_error}
 
-    if manager.is_user_exist(email):
+    if manager.get_user(email) is not None:
         return {'error': True, 'text': 'User exists'}
 
-    hash_password = get_hash_password(password)
+    hash_password = get_hash(password, True)
     if not manager.create_user(email, hash_password):
         return {'error': True, 'text': 'Something went wrong. Try again'}
 

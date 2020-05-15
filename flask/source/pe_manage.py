@@ -1,3 +1,7 @@
+import datetime
+
+from pe_utils import get_hash
+
 class Manager:
 
     def __init__(self, db_conn):
@@ -12,22 +16,24 @@ class Manager:
 
         return True
 
-    def check_user_error(self, email, hash_password):
+    def get_user(self, email):
         user = self.db_conn.load_user(email)
+        if not user:
+            print(f'User does not exist. Email: {email}')
+
+        return user
+
+    def check_user_error(self, email, hash_password):
+        user = self.get_user(email)
         if not user:
             return 'User does not exist'
 
         if hash_password != user['password']:
             return 'Incorrect email/password'
 
-    def is_user_exist(self, email):
-        user = self.db_conn.load_user(email)
-        return user is not None
-
     def create_event(self, email, event):
-        user = self.db_conn.load_user(email)
+        user = self.get_user(email)
         if not user:
-            print('no-user')
             return False
 
         try:
@@ -37,6 +43,20 @@ class Manager:
             return False
 
         return True
+
+    def get_events(self, email):
+        user = self.get_user(email)
+        if not user:
+            return []
+
+        events = self.db_conn.load_events(user['id'])
+        for event in events:
+            event['date'] = datetime.datetime.utcfromtimestamp(event['ts']).strftime('%Y-%m-%d %H:%M:%S')
+            event['id'] = get_hash(''.join([str(event[key]) for key in ['id', 'title', 'ts']]))
+            del event['ts']
+
+        return events
+
 
     @staticmethod
     def get_validation_error(**data):

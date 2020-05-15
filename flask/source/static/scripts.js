@@ -62,6 +62,7 @@ let auth = {
             this.authMessage.text(responseData.text);
         } else {
             this.authWrapper.removeClass('no-auth');
+            events.showEvents(responseData.events)
         }
     },
 
@@ -96,6 +97,17 @@ let events = {
 
         this.closeNewEventButton = $('.close-button', this.newEventOverlay);
         this.closeNewEventButton.click(this.closeNewEvent.bind(this));
+    },
+
+    showEvents: function(events) {
+        events.forEach(function(event) {
+            let el = this.eventCardTemplate.clone();
+            el.attr('id', event.id);
+            $('.event-date', el).html(event.date);
+            $('.event-title', el).html(event.title);
+            $('.event-note', el).html(event.note);
+            this.eventsWrapper.append(el);
+        }.bind(this))
     },
 
     showNewEvent: function () {

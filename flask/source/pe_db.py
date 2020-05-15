@@ -60,7 +60,7 @@ class DBConnecter:
             email=email,
             password=password,
         )
-        self._store(user_t)
+        return self._store(user_t)
 
     def load_user(self, email):
         session = self.DBSession()
@@ -74,14 +74,32 @@ class DBConnecter:
         } if row else None
 
     def store_event(self, user_id, event):
-        print(user_id)
         event_t = EventT(
             userid=user_id,
             title=event['title'],
             note=event['note'],
             ts=event['ts']
         )
-        self._store(event_t)
+        return self._store(event_t)
+
+    def load_events(self, user_id):
+        session = self.DBSession()
+        rows = session.query(EventT)\
+            .filter(EventT.userid == user_id)\
+            .order_by(EventT.ts)\
+            .all()
+        session.close()
+
+        events = []
+        for row in rows:
+            events.append({
+                'id': row.id,
+                'title': row.title,
+                'note': row.note,
+                'ts': row.ts
+            })
+            
+        return events
 
     def _store(self, obj):
         session = self.DBSession()
@@ -93,3 +111,4 @@ class DBConnecter:
             raise
         finally:
             session.close()
+            return obj.id

@@ -126,7 +126,7 @@ span.error {
 .event-card {
     display: inline-block;
     width: 60%;
-    margin: auto 15px;
+    margin: 15px auto;
     padding: 10px 15px;
     background-color: hotpink;
 }
