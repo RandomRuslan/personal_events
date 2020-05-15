@@ -6,7 +6,8 @@ class Manager:
     def create_user(self, email, password):
         try:
             self.db_conn.store_user(email, password)
-        except:
+        except Exception as e:
+            print(e)
             return False
 
         return True
@@ -22,6 +23,45 @@ class Manager:
     def is_user_exist(self, email):
         user = self.db_conn.load_user(email)
         return user is not None
+
+    def create_event(self, email, event):
+        user = self.db_conn.load_user(email)
+        if not user:
+            print('no-user')
+            return False
+
+        try:
+            self.db_conn.store_event(user['id'], event)
+        except Exception as e:
+            print(e)
+            return False
+
+        return True
+
+    @staticmethod
+    def get_validation_error(**data):
+        error = []
+        int_required = ['ts']
+        key_to_len = {
+            'email': 128,
+            'password': 64,
+            'title': 64,
+            'note': 32000
+        }
+
+        for key, value in data.items():
+            if not value:
+                error.append(f'{key} is required')
+            elif key in key_to_len and len(value) > key_to_len[key]:
+                error.append(f'{key} is too long (max={key_to_len[key]})')
+            else:
+                if key in int_required:
+                    try:
+                        int(value)
+                    except ValueError:
+                        error.append(f'{key} must be number')
+
+        return '\n'.join(error) if error else None
 
 
 class User:

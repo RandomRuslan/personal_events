@@ -112,7 +112,10 @@ let events = {
     addEvent: function () {
         let data = getFieldsData(this.newEventWrapper);
         if (data) {
-            $.post('/add_event', {}, function (responseData) {
+            data.ts = Date.parse(data.date + '@' + data.time)/1000;
+            delete data.date;
+            delete data.time;
+            $.post('/add_event', data, function (responseData) {
                 console.log(responseData);
                 this.newEventOverlay.hide();
                 this.closeNewEvent();

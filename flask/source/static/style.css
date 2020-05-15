@@ -99,8 +99,10 @@ span.error {
     padding: 0 0;
 }
 
-#new_event .new-date {
-    width: auto;
+#new_event .datetime input {
+    display: inline-block;
+    width: 35%;
+    margin-left: 5px;
 }
 
 #new_event textarea {

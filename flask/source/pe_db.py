@@ -26,7 +26,7 @@ def create_tables(engine):
             userid INTEGER NOT NULL,
             title VARCHAR(64) NOT NULL,
             note TEXT NOT NULL,
-            eventts TIMESTAMP NOT NULL
+            ts INTEGER NOT NULL
         );
     ''')
 
@@ -39,14 +39,14 @@ class UserT(Base):
     password = sa.Column(sa.VARCHAR(128), nullable=False)
 
 
-class EventsT(Base):
+class EventT(Base):
     __tablename__ = 'events'
 
     id = sa.Column(sa.INT, primary_key=True)
     userid = sa.Column(sa.INT, nullable=False)
     title = sa.Column(sa.VARCHAR(64), nullable=False)
     note = sa.Column(sa.TEXT, nullable=False)
-    eventts = sa.Column(sa.DATETIME, nullable=False)
+    ts = sa.Column(sa.DATETIME, nullable=False)
 
 
 class DBConnecter:
@@ -56,11 +56,11 @@ class DBConnecter:
         self.DBSession = sessionmaker(bind=self.engine)
 
     def store_user(self, email, password):
-        user = UserT(
+        user_t = UserT(
             email=email,
             password=password,
         )
-        self._store(user)
+        self._store(user_t)
 
     def load_user(self, email):
         session = self.DBSession()
@@ -68,9 +68,20 @@ class DBConnecter:
         session.close()
 
         return {
+            'id': row.id,
             'email': row.email,
             'password': row.password
         } if row else None
+
+    def store_event(self, user_id, event):
+        print(user_id)
+        event_t = EventT(
+            userid=user_id,
+            title=event['title'],
+            note=event['note'],
+            ts=event['ts']
+        )
+        self._store(event_t)
 
     def _store(self, obj):
         session = self.DBSession()
