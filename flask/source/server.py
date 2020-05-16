@@ -68,7 +68,7 @@ def sign_up():
 
     hash_password = get_hash(password, True)
     if not manager.create_user(email, hash_password):
-        return {'error': True, 'text': 'Something went wrong. Try again'}
+        return {'error': True, 'text': 'Something went wrong'}
 
     session['user'] = email
     return {'error': False, 'text': f'Welcome, {email}!', 'email': email}
@@ -99,11 +99,25 @@ def add_event():
     event['cardId'] = f'{uuid4().hex}_{int(time())}'
 
     if not manager.create_event(email, event):
-        return {'error': True, 'text': 'Something went wrong. Try again'}
+        return {'error': True, 'text': 'Something went wrong'}
 
     manager.prepare_event(event)
 
     return {'error': False, 'event': event}
+
+
+@app.route('/delete_event', methods=['POST'])
+def delete_event():
+    if not session.get('user'):
+        return {'error': True, 'text': 'User is not signed in'}
+
+    email = session['user']
+    card_id = request.form.get('cardId')
+
+    if not manager.delete_event(email, card_id):
+        return {'error': True, 'text': 'Something went wrong'}
+
+    return {'error': False}
 
 
 if __name__ == '__main__':

@@ -156,12 +156,20 @@ let EventManager = {
         }
     },
 
-    editEvent: function () {
+    editEvent: function (e) {
         console.log('edit', this);
     },
 
-    deleteEvent: function () {
-        console.log('delete', this);
+    deleteEvent: function (e) {
+        let card = e.target.parentElement;
+        let cardId = card.getAttribute('id');
+        $.post('/delete_event', {'cardId': cardId}, function (responseData) {
+            if (responseData.error) {
+                alert(responseData.text);
+            } else {
+                card.remove();
+            }
+        }.bind(this));
     }
 }
 

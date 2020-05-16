@@ -44,6 +44,19 @@ class Manager:
 
         return event_id
 
+    def delete_event(self, email, card_id):
+        user = self.get_user(email)
+        if not user:
+            return False
+
+        try:
+            self.db_conn.delete_event(user['id'], card_id)
+        except Exception as e:
+            print(e)
+            return False
+
+        return True
+
     def get_events(self, email):
         user = self.get_user(email)
         if not user:

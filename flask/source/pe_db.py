@@ -85,6 +85,17 @@ class DBConnecter:
         )
         return self._store(event_t)
 
+    def delete_event(self, user_id, card_id):
+        session = self.DBSession()
+        session.delete(
+            session.query(EventT)
+            .filter(EventT.userid == user_id)
+            .filter(EventT.cardid == card_id)
+            .one()
+        )
+        session.commit()
+        session.close()
+
     def load_events(self, user_id):
         session = self.DBSession()
         rows = session.query(EventT)\
