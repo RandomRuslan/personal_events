@@ -93,10 +93,14 @@ def add_event():
     if validation_error:
         return {'error': True, 'text': validation_error}
 
-    if not manager.create_event(email, event):
+    event_id = manager.create_event(email, event)
+    if not event_id:
         return {'error': True, 'text': 'Something went wrong. Try again'}
 
-    return {'error': False}
+    event['id'] = event_id
+    manager.prepare_event(event)
+
+    return {'error': False, 'event': event}
 
 
 if __name__ == '__main__':

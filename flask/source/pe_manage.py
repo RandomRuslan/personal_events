@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from pe_utils import get_hash
 
@@ -9,12 +9,12 @@ class Manager:
 
     def create_user(self, email, password):
         try:
-            self.db_conn.store_user(email, password)
+            user_id = self.db_conn.store_user(email, password)
         except Exception as e:
             print(e)
-            return False
+            return None
 
-        return True
+        return user_id
 
     def get_user(self, email):
         user = self.db_conn.load_user(email)
@@ -34,15 +34,15 @@ class Manager:
     def create_event(self, email, event):
         user = self.get_user(email)
         if not user:
-            return False
+            return None
 
         try:
-            self.db_conn.store_event(user['id'], event)
+            event_id = self.db_conn.store_event(user['id'], event)
         except Exception as e:
             print(e)
-            return False
+            return None
 
-        return True
+        return event_id
 
     def get_events(self, email):
         user = self.get_user(email)
@@ -50,13 +50,17 @@ class Manager:
             return []
 
         events = self.db_conn.load_events(user['id'])
-        for event in events:
-            event['date'] = datetime.datetime.utcfromtimestamp(event['ts']).strftime('%Y-%m-%d %H:%M:%S')
-            event['id'] = get_hash(''.join([str(event[key]) for key in ['id', 'title', 'ts']]))
-            del event['ts']
+        events = list(map(self.prepare_event, events))
 
         return events
 
+    @staticmethod
+    def prepare_event(event):
+        event['date'] = datetime.utcfromtimestamp(int(event['ts'])).strftime('%Y-%m-%d %H:%M:%S')
+        event['id'] = get_hash(''.join([str(event[key]) for key in ['id', 'title', 'ts']]))
+        del event['ts']
+
+        return event
 
     @staticmethod
     def get_validation_error(**data):

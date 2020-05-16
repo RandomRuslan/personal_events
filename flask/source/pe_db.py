@@ -110,5 +110,6 @@ class DBConnecter:
             session.rollback()
             raise
         finally:
+            obj_id = obj.id
             session.close()
-            return obj.id
+            return obj_id

@@ -79,6 +79,7 @@ let events = {
     newEventOverlay: null,
     newEventWrapper: null,
     eventCardTemplate: null,
+    eventMessage: null,
     showNewEventButton: null,
     addEventButton: null,
     closeNewEventButton: null,
@@ -88,6 +89,8 @@ let events = {
         this.newEventOverlay = $('#new_event_overlay', this.eventsWrapper);
         this.newEventWrapper = $('#new_event', this.newEventOverlay);
         this.eventCardTemplate = $('.event-card', this.eventsWrapper).remove();
+
+        this.eventMessage = $('#event_message', this.authBlock);
 
         this.showNewEventButton = $('#show_new_event', this.eventsWrapper);
         this.showNewEventButton.click(this.showNewEvent.bind(this));
@@ -117,6 +120,7 @@ let events = {
 
     closeNewEvent: function () {
         flushFields(this.newEventWrapper);
+        this.eventMessage.html('');
         this.newEventOverlay.hide();
         this.showNewEventButton.show();
     },
@@ -129,8 +133,12 @@ let events = {
             delete data.time;
             $.post('/add_event', data, function (responseData) {
                 console.log(responseData);
-                this.newEventOverlay.hide();
-                this.closeNewEvent();
+                if (responseData.error) {
+                    this.eventMessage.text(responseData.text);
+                } else {
+                    this.closeNewEvent();
+                    events.showEvents([responseData.event])
+                }
             }.bind(this));
         }
     }
