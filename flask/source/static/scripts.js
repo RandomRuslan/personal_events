@@ -114,6 +114,9 @@ let EventManager = {
         this.closeNewEventButton = $('.close-button', this.newEventOverlay);
         this.closeNewEventButton.click(this.closeNewEvent.bind(this));
 
+        $('.edit-event', this.eventsWrapper).click(this.editEvent.bind(this));
+        $('.delete-event', this.eventsWrapper).click(this.deleteEvent.bind(this));
+
         return this;
     },
 
