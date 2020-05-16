@@ -16,6 +16,11 @@ function getFieldsData(wrapper) {
     return !emptyError ? data : null;
 }
 
+function flashPage() {
+    flushFields(document);
+    $('.event-card').remove();
+}
+
 function flushFields(wrapper) {
     $('input, textarea', wrapper).each(function() {
         $(this).removeClass('error').val('');
@@ -72,9 +77,8 @@ let AuthManager = {
 
     signOut: function () {
         $.post('/signout', {}, function (responseData) {
-            flushFields(this.newEventWrapper);
+            flashPage();
             this.authWrapper.addClass('no-auth');
-            $('.event-card').remove();
         }.bind(this));
     }
 }

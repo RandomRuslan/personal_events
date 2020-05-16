@@ -71,9 +71,11 @@ span.error {
 
 #new_event_overlay {
     display: none;
-    width: 100%;
-    height: calc(100vh - 75px);
-    background-color: rgba(0,0,0,0.2);
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.3);
 }
 
 #new_event {
