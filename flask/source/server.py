@@ -1,4 +1,6 @@
 from flask import Flask, make_response, request, render_template, session
+from time import time
+from uuid import uuid4
 
 from constants import FLASK_SECRET_KEY
 from pe_db import DBConnecter, create_tables
@@ -77,6 +79,7 @@ def sign_out():
     session.pop('user', None)
     return {'text': 'You should sign in'}
 
+
 @app.route('/add_event', methods=['POST'])
 def add_event():
     if not session.get('user'):
@@ -93,11 +96,11 @@ def add_event():
     if validation_error:
         return {'error': True, 'text': validation_error}
 
-    event_id = manager.create_event(email, event)
-    if not event_id:
+    event['cardId'] = f'{uuid4().hex}_{int(time())}'
+
+    if not manager.create_event(email, event):
         return {'error': True, 'text': 'Something went wrong. Try again'}
 
-    event['id'] = event_id
     manager.prepare_event(event)
 
     return {'error': False, 'event': event}

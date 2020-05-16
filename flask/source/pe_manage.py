@@ -57,8 +57,8 @@ class Manager:
     @staticmethod
     def prepare_event(event):
         event['date'] = datetime.utcfromtimestamp(int(event['ts'])).strftime('%Y-%m-%d %H:%M:%S')
-        event['id'] = get_hash(''.join([str(event[key]) for key in ['id', 'title', 'ts']]))
-        del event['ts']
+        event.pop('id', None)
+        event.pop('ts', None)
 
         return event
 
@@ -87,17 +87,3 @@ class Manager:
 
         return '\n'.join(error) if error else None
 
-
-class User:
-
-    def __init__(self, email, events):
-        self.email = email
-        self.events = events
-
-
-class Event:
-
-    def __init__(self, title, note, ts):
-        self.title = title
-        self.note = note
-        self.ts = ts

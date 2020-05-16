@@ -26,7 +26,8 @@ def create_tables(engine):
             userid INTEGER NOT NULL,
             title VARCHAR(64) NOT NULL,
             note TEXT NOT NULL,
-            ts INTEGER NOT NULL
+            ts INTEGER NOT NULL,
+            cardid VARCHAR(64) NOT NULL
         );
     ''')
 
@@ -47,6 +48,7 @@ class EventT(Base):
     title = sa.Column(sa.VARCHAR(64), nullable=False)
     note = sa.Column(sa.TEXT, nullable=False)
     ts = sa.Column(sa.DATETIME, nullable=False)
+    cardid = sa.Column(sa.VARCHAR(64))
 
 
 class DBConnecter:
@@ -78,7 +80,8 @@ class DBConnecter:
             userid=user_id,
             title=event['title'],
             note=event['note'],
-            ts=event['ts']
+            ts=event['ts'],
+            cardid=event['cardId'],
         )
         return self._store(event_t)
 
@@ -96,7 +99,8 @@ class DBConnecter:
                 'id': row.id,
                 'title': row.title,
                 'note': row.note,
-                'ts': row.ts
+                'ts': row.ts,
+                'cardId': row.cardid,
             })
             
         return events

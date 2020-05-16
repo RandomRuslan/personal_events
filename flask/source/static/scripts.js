@@ -22,7 +22,9 @@ function flushFields(wrapper) {
     });
 }
 
-let auth = {
+let AuthManager = {
+    eventManager: null,
+
     authWrapper: null,
     authBlock: null,
     signInButton: null,
@@ -33,7 +35,9 @@ let auth = {
 
     eventCardTemplate: null,
 
-    init: function () {
+    init: function (eventManager) {
+        this.eventManager = eventManager;
+
         this.authWrapper = $('#auth_wrapper');
         this.authBlock = $('#auth', this.authWrapper);
         this.signInButton = $('#sign_in', this.authBlock);
@@ -62,7 +66,7 @@ let auth = {
             this.authMessage.text(responseData.text);
         } else {
             this.authWrapper.removeClass('no-auth');
-            events.showEvents(responseData.events)
+            this.eventManager.showEvents(responseData.events)
         }
     },
 
@@ -74,13 +78,15 @@ let auth = {
     }
 }
 
-let events = {
+let EventManager = {
+    eventCardTemplate: null,
+
     eventsWrapper: null,
     newEventOverlay: null,
     newEventWrapper: null,
-    eventCardTemplate: null,
-    eventMessage: null,
+
     showNewEventButton: null,
+    eventMessage: null,
     addEventButton: null,
     closeNewEventButton: null,
     
@@ -100,15 +106,22 @@ let events = {
 
         this.closeNewEventButton = $('.close-button', this.newEventOverlay);
         this.closeNewEventButton.click(this.closeNewEvent.bind(this));
+
+        return this;
     },
 
     showEvents: function(events) {
         events.forEach(function(event) {
             let el = this.eventCardTemplate.clone();
-            el.attr('id', event.id);
+            el.attr('id', event.cardId);
+
             $('.event-date', el).html(event.date);
             $('.event-title', el).html(event.title);
             $('.event-note', el).html(event.note);
+
+            $('.edit-event', el).click(this.editEvent.bind(this));
+            $('.delete-event', el).click(this.deleteEvent.bind(this));
+
             this.eventsWrapper.append(el);
         }.bind(this))
     },
@@ -137,14 +150,22 @@ let events = {
                     this.eventMessage.text(responseData.text);
                 } else {
                     this.closeNewEvent();
-                    events.showEvents([responseData.event])
+                    this.showEvents([responseData.event])
                 }
             }.bind(this));
         }
+    },
+
+    editEvent: function () {
+        console.log('edit', this);
+    },
+
+    deleteEvent: function () {
+        console.log('delete', this);
     }
 }
 
 $(document).ready(function () {
-    auth.init();
-    events.init();
+    var eventManager = EventManager.init();
+    AuthManager.init(eventManager);
 })
