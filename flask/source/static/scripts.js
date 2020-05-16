@@ -66,7 +66,7 @@ let AuthManager = {
             this.authMessage.text(responseData.text);
         } else {
             this.authWrapper.removeClass('no-auth');
-            this.eventManager.showEvents(responseData.events)
+            this.eventManager.showEvents(responseData.events);
         }
     },
 
@@ -74,6 +74,7 @@ let AuthManager = {
         $.post('/signout', {}, function (responseData) {
             flushFields(this.newEventWrapper);
             this.authWrapper.addClass('no-auth');
+            $('.event-card').remove();
         }.bind(this));
     }
 }
@@ -94,7 +95,9 @@ let EventManager = {
         this.eventsWrapper = $('#events_wrapper');
         this.newEventOverlay = $('#new_event_overlay', this.eventsWrapper);
         this.newEventWrapper = $('#new_event', this.newEventOverlay);
-        this.eventCardTemplate = $('.event-card', this.eventsWrapper).remove();
+        this.eventCardTemplate = $('.event-card-template', this.eventsWrapper)
+            .removeClass('.event-card-template')
+            .remove();
 
         this.eventMessage = $('#event_message', this.authBlock);
 
