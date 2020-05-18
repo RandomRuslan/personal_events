@@ -88,6 +88,7 @@ def add_event():
     email = session['user']
     event = {
         'ts': request.form.get('ts'),
+        'tz': request.form.get('tz'),
         'title': request.form.get('title'),
         'note': request.form.get('note'),
     }

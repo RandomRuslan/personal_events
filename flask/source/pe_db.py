@@ -1,6 +1,3 @@
-import json
-from datetime import datetime
-
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,6 +24,7 @@ def create_tables(engine):
             title VARCHAR(64) NOT NULL,
             note TEXT NOT NULL,
             ts INTEGER NOT NULL,
+            tz INTEGER NOT NULL,
             cardid VARCHAR(64) NOT NULL
         );
     ''')
@@ -47,7 +45,8 @@ class EventT(Base):
     userid = sa.Column(sa.INT, nullable=False)
     title = sa.Column(sa.VARCHAR(64), nullable=False)
     note = sa.Column(sa.TEXT, nullable=False)
-    ts = sa.Column(sa.DATETIME, nullable=False)
+    ts = sa.Column(sa.INT, nullable=False)
+    tz = sa.Column(sa.INT, nullable=False)
     cardid = sa.Column(sa.VARCHAR(64))
 
 
@@ -81,6 +80,7 @@ class DBConnecter:
             title=event['title'],
             note=event['note'],
             ts=event['ts'],
+            tz=event['tz'],
             cardid=event['cardId'],
         )
         return self._store(event_t)
@@ -100,7 +100,7 @@ class DBConnecter:
         session = self.DBSession()
         rows = session.query(EventT)\
             .filter(EventT.userid == user_id)\
-            .order_by(EventT.ts)\
+            .order_by(sa.desc(EventT.ts))\
             .all()
         session.close()
 
@@ -111,6 +111,7 @@ class DBConnecter:
                 'title': row.title,
                 'note': row.note,
                 'ts': row.ts,
+                'tz': row.tz,
                 'cardId': row.cardid,
             })
             

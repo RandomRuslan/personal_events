@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from pe_utils import get_hash
 
 class Manager:
 
@@ -69,16 +68,20 @@ class Manager:
 
     @staticmethod
     def prepare_event(event):
-        event['date'] = datetime.utcfromtimestamp(int(event['ts'])).strftime('%Y-%m-%d %H:%M:%S')
+        event['ts'] = int(event['ts'])
+
+        ts = event['ts'] - int(event['tz']) * 60 * 60
+        event['date'] = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
         event.pop('id', None)
-        event.pop('ts', None)
+        event.pop('tz', None)
 
         return event
 
     @staticmethod
     def get_validation_error(**data):
         error = []
-        int_required = ['ts']
+        int_required = ['ts', 'tz']
         key_to_len = {
             'email': 128,
             'password': 64,
