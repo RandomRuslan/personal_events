@@ -42,7 +42,10 @@ function convertTsToDate(ts) {
     let day = getTwoCharFormat(date.getDate());
     let month = getTwoCharFormat(date.getMonth() + 1);
     let year = date.getFullYear();
-    return year + '-' + month + '-' + day + ' ' + hours + ":" + minutes + ":" + seconds;
+    return [
+        year + '-' + month + '-' + day,
+        hours + ":" + minutes + ":" + seconds
+    ];
 }
 
 let AuthManager = {
@@ -105,32 +108,26 @@ let EventManager = {
     eventCardTemplate: null,
 
     eventsWrapper: null,
-    newEventOverlay: null,
-    newEventWrapper: null,
+    eventOverlay: null,
+    setEventForm: null,
 
-    showNewEventButton: null,
     eventMessage: null,
-    addEventButton: null,
-    closeNewEventButton: null,
+    cardIdInputTemplate: null,
     
     init: function () {
         this.eventsWrapper = $('#events_wrapper');
-        this.newEventOverlay = $('#new_event_overlay', this.eventsWrapper);
-        this.newEventWrapper = $('#new_event', this.newEventOverlay);
+        this.eventOverlay = $('#event_overlay', this.eventsWrapper);
+        this.setEventForm = $('#settable_event', this.eventOverlay);
         this.eventCardTemplate = $('.event-card-template', this.eventsWrapper)
             .removeClass('event-card-template')
             .remove();
 
         this.eventMessage = $('#event_message', this.authBlock);
+        this.cardIdInputTemplate = $('#card_id', this.eventOverlay).remove();
 
-        this.showNewEventButton = $('#show_new_event', this.eventsWrapper);
-        this.showNewEventButton.click(this.showNewEventForm.bind(this));
-
-        this.addEventButton = $('#add_event', this.newEventOverlay);
-        this.addEventButton.click(this.addEvent.bind(this));
-
-        this.closeNewEventButton = $('.close-button', this.newEventOverlay);
-        this.closeNewEventButton.click(this.closeNewEventForm.bind(this));
+        $('#show_event_overlay', this.eventsWrapper).click(function () { this.showEventForm() }.bind(this));
+        $('#set_event', this.eventOverlay).click(this.addEvent.bind(this));
+        $('.close-button', this.eventOverlay).click(this.closeEventForm.bind(this));
 
         $('.edit-event', this.eventsWrapper).click(this.editEvent.bind(this));
         $('.delete-event', this.eventsWrapper).click(this.deleteEvent.bind(this));
@@ -167,7 +164,10 @@ let EventManager = {
         el.attr('id', event.cardId);
         el.data('ts', event.ts);
 
-        $('.event-date', el).html(convertTsToDate(event.ts));
+        let date = convertTsToDate(event.ts);
+        $('.event-date', el).html(date[0]);
+        $('.event-time', el).html(date[1]);
+
         $('.event-title', el).html(event.title);
         $('.event-note', el).html(event.note);
 
@@ -177,32 +177,59 @@ let EventManager = {
         return el;
     },
 
-    showNewEventForm: function () {
-        this.newEventOverlay.show();
-        this.showNewEventButton.hide();
+    showEventForm: function (data) {
+        if (data) {
+            this.setEventForm.append(this.cardIdInputTemplate.clone());
+            $('input, textarea', this.setEventForm).each(function() {
+                let overlayField = $(this);
+                let key = overlayField.attr('name');
+                overlayField.val(data[key]).data('oldValue', data[key]);
+            });
+        }
+        this.eventOverlay.show();
     },
 
-    closeNewEventForm: function () {
-        flushFields(this.newEventWrapper);
+    closeEventForm: function () {
+        flushFields(this.setEventForm);
         this.eventMessage.html('');
-        this.newEventOverlay.hide();
-        this.showNewEventButton.show();
+        $('#card_id', this.setEventForm).remove();
+        this.eventOverlay.hide();
+    },
+
+    isNewData: function() {
+        let isAnyNewData = false;
+        $('input, textarea', this.setEventForm).each(function() {
+            let el = $(this);
+            if (el.val() !== el.data('oldValue')) {
+                isAnyNewData = true;
+                return false;
+            }
+        })
+        return isAnyNewData;
     },
 
     addEvent: function () {
-        let data = getFieldsData(this.newEventWrapper);
+        let data = getFieldsData(this.setEventForm);
         if (data) {
+            let cardId = data.cardid;
+            if (cardId && !this.isNewData()) {
+                this.eventMessage.text('New data is required');
+                return;
+            }
             data.ts = Date.parse(data.date + '@' + data.time)/1000;
             data.tz = new Date().getTimezoneOffset() / 60;
             delete data.date;
             delete data.time;
 
-            $.post('/add_event', data, function (responseData) {
+            $.post('/set_event', data, function (responseData) {
                 console.log(responseData);
                 if (responseData.error) {
                     this.eventMessage.text(responseData.text);
                 } else {
-                    this.closeNewEventForm();
+                    if (cardId) {
+                        $('#' + cardId, this.eventsWrapper).remove();
+                    }
+                    this.closeEventForm();
                     this.showNewEvent(responseData.event);
                 }
             }.bind(this));
@@ -210,7 +237,15 @@ let EventManager = {
     },
 
     editEvent: function (e) {
-        console.log('edit', this);
+        let card = $(e.target.parentElement);
+        let data = {'cardid': card.attr('id')};
+        
+        $('[data-key]', card).each(function() {
+            let cardField = $(this);
+            data[cardField.data('key')] = cardField.text();
+        });
+
+        this.showEventForm(data);
     },
 
     deleteEvent: function (e) {

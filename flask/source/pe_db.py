@@ -23,7 +23,7 @@ def create_tables(engine):
             userid INTEGER NOT NULL,
             title VARCHAR(64) NOT NULL,
             note TEXT NOT NULL,
-            ts INTEGER NOT NULL,
+            ts BIGINT NOT NULL,
             tz INTEGER NOT NULL,
             cardid VARCHAR(64) NOT NULL
         );
@@ -45,7 +45,7 @@ class EventT(Base):
     userid = sa.Column(sa.INT, nullable=False)
     title = sa.Column(sa.VARCHAR(64), nullable=False)
     note = sa.Column(sa.TEXT, nullable=False)
-    ts = sa.Column(sa.INT, nullable=False)
+    ts = sa.Column(sa.BIGINT, nullable=False)
     tz = sa.Column(sa.INT, nullable=False)
     cardid = sa.Column(sa.VARCHAR(64))
 
@@ -85,6 +85,12 @@ class DBConnecter:
         )
         return self._store(event_t)
 
+    def edit_event(self, card_id, event):
+        session = self.DBSession()
+        session.query(EventT).filter(EventT.cardid == card_id).update(event)
+        session.commit()
+        session.close()
+
     def delete_event(self, user_id, card_id):
         session = self.DBSession()
         session.delete(
@@ -122,7 +128,8 @@ class DBConnecter:
         try:
             session.add(obj)
             session.commit()
-        except:
+        except Exception as e:
+            print(e)
             session.rollback()
             raise
         finally:

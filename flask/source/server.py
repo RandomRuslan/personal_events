@@ -80,8 +80,8 @@ def sign_out():
     return {'text': 'You should sign in'}
 
 
-@app.route('/add_event', methods=['POST'])
-def add_event():
+@app.route('/set_event', methods=['POST'])
+def set_event():
     if not session.get('user'):
         return {'error': True, 'text': 'User is not signed in'}
 
@@ -90,17 +90,22 @@ def add_event():
         'ts': request.form.get('ts'),
         'tz': request.form.get('tz'),
         'title': request.form.get('title'),
-        'note': request.form.get('note'),
+        'note': request.form.get('note')
     }
 
     validation_error = manager.get_validation_error(**event)
     if validation_error:
         return {'error': True, 'text': validation_error}
 
-    event['cardId'] = f'{uuid4().hex}_{int(time())}'
-
-    if not manager.create_event(email, event):
-        return {'error': True, 'text': 'Something went wrong'}
+    card_id = request.form.get('cardid')
+    if card_id:
+        if not manager.edit_event(card_id, event):
+            return {'error': True, 'text': 'Something went wrong'}
+        event['cardId'] = card_id
+    else:
+        event['cardId'] = f'{uuid4().hex}_{int(time())}'
+        if not manager.create_event(email, event):
+            return {'error': True, 'text': 'Something went wrong'}
 
     manager.prepare_event(event)
 

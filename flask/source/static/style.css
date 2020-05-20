@@ -68,20 +68,21 @@ span.error {
 #events_wrapper {
     position: relative;
     width: 100%;
-    min-height: 60px;
+    height: 100%;
     text-align: center;
 }
 
-#new_event_overlay {
+#event_overlay {
     display: none;
     position: fixed;
     top: 0;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0,0,0,0.3);
+    z-index: 100;
 }
 
-#new_event {
+#settable_event {
     position: relative;
     width: 65%;
     margin: auto;
@@ -90,40 +91,39 @@ span.error {
     background-color: aqua;
 }
 
-#new_event > * {
+#settable_event > * {
     font-size: 20px;
     font-family: monospace;
     color: gray;
 }
 
-#new_event input {
-    display: block;
+#settable_event input {
     width: 60%;
     margin: 10px 0;
     height: 26px;
     padding: 0 0;
 }
 
-#new_event .datetime input {
+#settable_event .datetime input {
     display: inline-block;
     width: 35%;
     margin-left: 5px;
 }
 
-#new_event textarea {
+#settable_event textarea {
     display: block;
     width: calc(100% - 6px);
     height: 400px;
     resize: none;
 }
 
-#new_event .close-button {
+#settable_event .close-button {
     position: absolute;
     top: 5px;
     right: 15px;
 }
 
-#new_event .close-button:hover {
+#settable_event .close-button:hover {
     color: red;
     cursor: pointer;
 }
@@ -136,7 +136,7 @@ span.error {
     background-color: lightsalmon;
 }
 
-#show_new_event {
+#show_event_overlay {
     position: fixed;
     top: 10px;
     right: 20px;

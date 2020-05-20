@@ -43,6 +43,15 @@ class Manager:
 
         return event_id
 
+    def edit_event(self, card_id, event):
+        try:
+            self.db_conn.edit_event(card_id, event)
+        except Exception as e:
+            print(e)
+            return False
+
+        return True
+
     def delete_event(self, email, card_id):
         user = self.get_user(email)
         if not user:
@@ -71,7 +80,7 @@ class Manager:
         event['ts'] = int(event['ts'])
 
         ts = event['ts'] - int(event['tz']) * 60 * 60
-        event['date'] = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        event['date'] = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S').split()
 
         event.pop('id', None)
         event.pop('tz', None)
