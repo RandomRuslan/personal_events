@@ -50,12 +50,11 @@ span.error {
 
 #sign_out {
     position: absolute;
-    top: 10px;
+    top: 14px;
     left: 10px;
-    background-color: red;
     width: 70px;
-    height: 50px;
-    z-index: 100;
+    cursor: pointer;
+    z-index: 90;
 }
 
 .auth-button {
@@ -78,30 +77,32 @@ span.error {
     top: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.4);
     z-index: 100;
 }
 
 #settable_event {
     position: relative;
     width: 65%;
-    margin: auto;
+    margin: 10% auto;
     padding: 15px;
+    border-radius: 10px;
     text-align: left;
-    background-color: aqua;
+    background-color: lightblue;
 }
 
 #settable_event > * {
     font-size: 20px;
     font-family: monospace;
-    color: gray;
+    color: steelblue;
 }
 
-#settable_event input {
-    width: 60%;
-    margin: 10px 0;
-    height: 26px;
-    padding: 0 0;
+#settable_event input,
+#settable_event textarea {
+    padding: 5px 10px;
+    color: #000;
+    border: 0;
+    border-radius: 3px;
 }
 
 #settable_event .datetime input {
@@ -110,11 +111,18 @@ span.error {
     margin-left: 5px;
 }
 
+#settable_event input {
+    width: 60%;
+    margin: 10px 0;
+    height: 26px;
+}
+
 #settable_event textarea {
     display: block;
-    width: calc(100% - 6px);
-    height: 400px;
+    width: calc(100% - 20px);
+    height: 250px;
     resize: none;
+    color: #000;
 }
 
 #settable_event .close-button {
@@ -125,6 +133,14 @@ span.error {
 
 #settable_event .close-button:hover {
     color: red;
+    cursor: pointer;
+}
+
+#settable_event #set_event {
+    width: 60px;
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
     cursor: pointer;
 }
 
@@ -178,7 +194,12 @@ span.error {
     position: fixed;
     top: 10px;
     right: 20px;
-    background-color: forestgreen;
-    width: 70px;
-    height: 50px;
+    width: 80px;
+    cursor: pointer;
+}
+
+#sign_out:hover,
+#show_event_overlay:hover {
+    border-radius: 10px;
+    background-color: rgba(255,160,122, 0.5);
 }
