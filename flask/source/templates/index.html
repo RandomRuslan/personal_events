@@ -11,7 +11,8 @@
     <div id="auth_wrapper" {% if not email %}class="no-auth"{% endif %}>
         <img id="sign_out" src="{{ url_for('static', filename='images/signout.png') }}" alt="sign out" />
         <div id="auth">
-            <span id="auth_message">{{ text }}</span>
+            <span>You should sign in</span>
+            <span id="auth_error" hidden></span>
             <input type="text" name="email" placeholder="Email" />
             <input type="password" name="password" placeholder="Password" />
             <button id="sign_in" class="auth-button">Sign in</button>

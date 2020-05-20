@@ -32,12 +32,6 @@ img, button {
     border: 1px solid #ff0000;
 }
 
-span.error {
-    border: none;
-    text-decoration: underline;
-    text-decoration-color: #ff0000;
-}
-
 #auth_wrapper.no-auth #auth,
 #events_wrapper #settable_event {
     position: relative;
@@ -68,6 +62,12 @@ span.error {
 #auth_wrapper.no-auth #sign_out,
 #auth_wrapper.no-auth ~ #events_wrapper {
     display: none;
+}
+
+#auth_wrapper #auth_error {
+    display: block;
+    margin: 6px;
+    color: #ff0000;
 }
 
 #auth_wrapper #auth input {

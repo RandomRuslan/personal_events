@@ -55,7 +55,7 @@ let AuthManager = {
     authBlock: null,
     signInButton: null,
     signUpButton: null,
-    authMessage: null,
+    authErrorMessage: null,
 
     signOutButton: null,
 
@@ -68,7 +68,7 @@ let AuthManager = {
         this.authBlock = $('#auth', this.authWrapper);
         this.signInButton = $('#sign_in', this.authBlock);
         this.signUpButton = $('#sign_up', this.authBlock);
-        this.authMessage = $('#auth_message', this.authBlock);
+        this.authErrorMessage = $('#auth_error', this.authBlock);
 
         this.signOutButton = $('#sign_out');
 
@@ -87,9 +87,9 @@ let AuthManager = {
 
     afterAuth: function(responseData) {
         console.log(responseData);
-        this.authMessage.toggleClass('error', responseData.error);
+        this.authErrorMessage.toggle(responseData.error);
         if (responseData.error) {
-            this.authMessage.text(responseData.text);
+            this.authErrorMessage.text(responseData.text);
         } else {
             this.authWrapper.removeClass('no-auth');
             this.eventManager.showLoadedEvents(responseData.events);

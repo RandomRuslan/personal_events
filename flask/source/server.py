@@ -15,19 +15,12 @@ users = {}
 
 @app.route('/', methods=['GET'])
 def main():
-    text = None
-    if session.get('user'):
-        email = session['user']
-    else:
-        text = 'You should sign in'
-        email = None
-
+    email = session['user'] if session.get('user') else None
     response = {
         'email': email,
-        'text': text,
         'events': manager.get_events(email) if email else []
     }
-    print(response)
+
     return make_response(render_template('index.html', **response))
 
 
