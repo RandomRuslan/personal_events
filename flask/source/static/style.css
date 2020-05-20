@@ -3,20 +3,58 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-image: radial-gradient(ellipse farthest-corner at right bottom, #adc0ce 0%, #b88eec 50%, #E4E4E4 100%);
+    background-image: radial-gradient(ellipse farthest-corner at right bottom, #adc0ce 0%, #b88eec 50%, #e4e4e4 100%);
 }
 
 body {
     overflow-y: auto;
 }
 
+input,
+textarea {
+    padding: 5px 10px;
+    color: #000;
+    border: 0;
+    border-radius: 3px;
+}
+
+input {
+    width: 60%;
+    margin: 10px 0;
+    height: 26px;
+}
+
+img, button {
+    cursor: pointer;
+}
+
 .error {
-    border: 1px solid red;
+    border: 1px solid #ff0000;
 }
 
 span.error {
-    color: red;
     border: none;
+    text-decoration: underline;
+    text-decoration-color: #ff0000;
+}
+
+#auth_wrapper.no-auth #auth,
+#events_wrapper #settable_event {
+    position: relative;
+    width: 40%;
+    margin: 10% auto;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: #4682b4;
+    background-color: #add8e6;
+    font-size: 20px;
+}
+
+#auth_wrapper #sign_out:hover,
+#events_wrapper #show_event_overlay:hover {
+    border-radius: 10px;
+    background-color: rgba(255,160,122, 0.5);
 }
 
 #auth_wrapper {
@@ -32,15 +70,7 @@ span.error {
     display: none;
 }
 
-.no-auth #auth {
-    width: 50%;
-    margin: 20% auto;
-    padding: 10px;
-    text-align: center;
-    background-color: greenyellow;
-}
-
-#auth input {
+#auth_wrapper #auth input {
     display: block;
     margin: 15px auto;
     height: 50px;
@@ -48,20 +78,22 @@ span.error {
     font-size: 20px;
 }
 
-#sign_out {
+#auth_wrapper #sign_out {
     position: absolute;
     top: 14px;
     left: 10px;
     width: 70px;
-    cursor: pointer;
     z-index: 90;
 }
 
-.auth-button {
+#auth_wrapper .auth-button {
     display: inline-block;
-    background-color: lightpink;
-    width: 45%;
+    width: 30%;
     height: 50px;
+    margin: 10px 5px;
+    font-size: 16px;
+    background-color: #bb9edc;
+    color: #3c3c3c;
 }
 
 #events_wrapper {
@@ -71,7 +103,7 @@ span.error {
     text-align: center;
 }
 
-#event_overlay {
+#events_wrapper #event_overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -81,70 +113,49 @@ span.error {
     z-index: 100;
 }
 
-#settable_event {
-    position: relative;
-    width: 65%;
-    margin: 10% auto;
-    padding: 15px;
-    border-radius: 10px;
+#events_wrapper #settable_event {
+    width: 50%;
     text-align: left;
-    background-color: lightblue;
 }
 
-#settable_event > * {
+#events_wrapper #settable_event > * {
     font-size: 20px;
     font-family: monospace;
     color: steelblue;
 }
 
-#settable_event input,
-#settable_event textarea {
-    padding: 5px 10px;
-    color: #000;
-    border: 0;
-    border-radius: 3px;
-}
-
-#settable_event .datetime input {
+#events_wrapper #settable_event .datetime input {
     display: inline-block;
     width: 35%;
     margin-left: 5px;
 }
 
-#settable_event input {
-    width: 60%;
-    margin: 10px 0;
-    height: 26px;
-}
-
-#settable_event textarea {
+#events_wrapper #settable_event textarea {
     display: block;
     width: calc(100% - 20px);
     height: 250px;
     resize: none;
-    color: #000;
 }
 
-#settable_event .close-button {
+#events_wrapper #settable_event .close-button {
     position: absolute;
     top: 5px;
     right: 15px;
 }
 
-#settable_event .close-button:hover {
-    color: red;
+#events_wrapper #settable_event .close-button:hover {
+    color: #ff0000;
     cursor: pointer;
 }
 
-#settable_event #set_event {
+#events_wrapper #settable_event #set_event {
     width: 60px;
     position: absolute;
     right: -30px;
     bottom: -30px;
-    cursor: pointer;
 }
 
-.event-card {
+#events_wrapper .event-card {
     position: relative;
     display: inline-block;
     width: 60%;
@@ -156,50 +167,42 @@ span.error {
     word-wrap: break-word;
 }
 
-.event-card .datetime {
+#events_wrapper .event-card .datetime {
     padding: 0 10px;
 }
 
-.event-card .datetime div {
+#events_wrapper .event-card .datetime div {
     display: inline-block;
 }
 
-.event-card .event-title {
+#events_wrapper .event-card .event-title {
     width: 80%;
     font-size: 18px;
-    color: blueviolet;
+    color: #8a2be2;
     margin: 10px auto;
     text-align: center;
 }
 
-.event-card .event-note {
-    background-color: white;
+#events_wrapper .event-card .event-note {
+    background-color: #fff;
     border-radius: 6px;
     padding: 10px;
 }
 
-.event-card .button-block {
+#events_wrapper .event-card .button-block {
     position: absolute;
     top: 8px;
     right: 10px;
 }
 
-.event-card .button-block img {
+#events_wrapper .event-card .button-block img {
     width: 26px;
     margin-left: 5px;
-    cursor: pointer;
 }
 
-#show_event_overlay {
+#events_wrapper #show_event_overlay {
     position: fixed;
     top: 10px;
     right: 20px;
     width: 80px;
-    cursor: pointer;
-}
-
-#sign_out:hover,
-#show_event_overlay:hover {
-    border-radius: 10px;
-    background-color: rgba(255,160,122, 0.5);
 }
