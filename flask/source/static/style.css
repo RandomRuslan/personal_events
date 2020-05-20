@@ -129,11 +129,49 @@ span.error {
 }
 
 .event-card {
+    position: relative;
     display: inline-block;
     width: 60%;
     margin: 15px auto;
-    padding: 10px 15px;
-    background-color: lightsalmon;
+    padding: 17px 10px 10px;
+    text-align: left;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,0.7);
+    word-wrap: break-word;
+}
+
+.event-card .datetime {
+    padding: 0 10px;
+}
+
+.event-card .datetime div {
+    display: inline-block;
+}
+
+.event-card .event-title {
+    width: 80%;
+    font-size: 18px;
+    color: blueviolet;
+    margin: 10px auto;
+    text-align: center;
+}
+
+.event-card .event-note {
+    background-color: white;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.event-card .button-block {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+}
+
+.event-card .button-block img {
+    width: 26px;
+    margin-left: 5px;
+    cursor: pointer;
 }
 
 #show_event_overlay {

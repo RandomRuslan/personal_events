@@ -237,7 +237,7 @@ let EventManager = {
     },
 
     editEvent: function (e) {
-        let card = $(e.target.parentElement);
+        let card = $(e.target).closest('.event-card');
         let data = {'cardid': card.attr('id')};
         
         $('[data-key]', card).each(function() {
@@ -249,8 +249,8 @@ let EventManager = {
     },
 
     deleteEvent: function (e) {
-        let card = e.target.parentElement;
-        let cardId = card.getAttribute('id');
+        let card = $(e.target).closest('.event-card');
+        let cardId = card.attr('id');
         $.post('/delete_event', {'cardId': cardId}, function (responseData) {
             if (responseData.error) {
                 alert(responseData.text);
