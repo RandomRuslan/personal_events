@@ -1,3 +1,5 @@
+import re
+
 from pe_utils import convert_ts_to_date
 
 
@@ -88,6 +90,7 @@ class Manager:
     @staticmethod
     def get_validation_error(**data):
         error = []
+
         int_required = ['ts', 'tz']
         key_to_len = {
             'email': 128,
@@ -95,18 +98,22 @@ class Manager:
             'title': 64,
             'note': 32000
         }
+        key_to_regex = {
+            'email': r'[^@]+@[^@]+\.[^@]+'
+        }
 
         for key, value in data.items():
             if not value:
                 error.append(f'{key} is required')
             elif key in key_to_len and len(value) > key_to_len[key]:
                 error.append(f'{key} is too long (max={key_to_len[key]})')
-            else:
-                if key in int_required:
-                    try:
-                        int(value)
-                    except ValueError:
-                        error.append(f'{key} must be number')
+            elif key in key_to_regex and not re.match(key_to_regex[key], value):
+                error.append(f'Incorrect format of {key}')
+            elif key in int_required:
+                try:
+                    int(value)
+                except ValueError:
+                    error.append(f'{key} must be number')
 
         return '\n'.join(error) if error else None
 

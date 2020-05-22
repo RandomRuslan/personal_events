@@ -51,4 +51,5 @@ class Mailer:
             print(e)
             return False
 
+        print(f'Message {event["title"]} is sent to {event["email"]}. Card id: {event["cardId"]}')
         return True

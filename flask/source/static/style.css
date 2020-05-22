@@ -68,6 +68,7 @@ img, button {
     display: block;
     margin: 6px;
     color: #ff0000;
+    white-space: pre-line;
 }
 
 #auth_wrapper #auth input {
@@ -187,6 +188,9 @@ img, button {
     background-color: #fff;
     border-radius: 6px;
     padding: 10px;
+    max-height: 170px;
+    overflow-y: auto;
+    white-space: pre-line;
 }
 
 #events_wrapper .event-card .button-block {
