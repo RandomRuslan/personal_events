@@ -1,6 +1,9 @@
+from time import time
+
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
 
 from constants import DB_URL
 
@@ -13,7 +16,7 @@ def create_tables(engine):
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL,
             email VARCHAR(128) UNIQUE NOT NULL,
-            password VARCHAR(128) UNIQUE NOT NULL
+            password VARCHAR(128) NOT NULL
         );
     ''')
 
@@ -25,7 +28,8 @@ def create_tables(engine):
             note TEXT NOT NULL,
             ts BIGINT NOT NULL,
             tz INTEGER NOT NULL,
-            cardid VARCHAR(64) NOT NULL
+            cardid VARCHAR(64) NOT NULL,
+            notified BOOLEAN DEFAULT FALSE
         );
     ''')
 
@@ -48,6 +52,7 @@ class EventT(Base):
     ts = sa.Column(sa.BIGINT, nullable=False)
     tz = sa.Column(sa.INT, nullable=False)
     cardid = sa.Column(sa.VARCHAR(64))
+    notified = sa.Column(sa.BOOLEAN, default=False)
 
 
 class DBConnecter:
@@ -121,6 +126,32 @@ class DBConnecter:
                 'cardId': row.cardid,
             })
             
+        return events
+
+    def load_events_for_mailing(self):
+        now = int(time())
+
+        session = self.DBSession()
+        rows = session.query(EventT).join(UserT, UserT.id == EventT.userid)\
+            .with_entities(UserT.email, EventT.id, EventT.title, EventT.note, EventT.ts, EventT.tz, EventT.cardid)\
+            .filter(EventT.notified.is_(False))\
+            .filter(EventT.ts >= now)\
+            .filter(EventT.ts <= now + 60 * 60)\
+            .all()
+
+        session.close()
+
+        events = []
+        for row in rows:
+            events.append({
+                'email': row.email,
+                'title': row.title,
+                'note': row.note,
+                'ts': row.ts,
+                'tz': row.tz,
+                'cardId': row.cardid
+            })
+
         return events
 
     def _store(self, obj):

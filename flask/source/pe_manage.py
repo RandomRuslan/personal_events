@@ -1,4 +1,4 @@
-from datetime import datetime
+from pe_utils import convert_ts_to_date
 
 
 class Manager:
@@ -44,6 +44,7 @@ class Manager:
         return event_id
 
     def edit_event(self, card_id, event):
+        event['notified'] = False
         try:
             self.db_conn.edit_event(card_id, event)
         except Exception as e:
@@ -77,10 +78,7 @@ class Manager:
 
     @staticmethod
     def prepare_event(event):
-        event['ts'] = int(event['ts'])
-
-        ts = event['ts'] - int(event['tz']) * 60 * 60
-        event['date'] = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S').split()
+        event['date'] = convert_ts_to_date(event['ts'], event['tz'])
 
         event.pop('id', None)
         event.pop('tz', None)

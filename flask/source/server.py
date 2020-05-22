@@ -4,8 +4,9 @@ from uuid import uuid4
 
 from constants import FLASK_SECRET_KEY
 from pe_db import DBConnecter, create_tables
+from pe_mail import Mailer
 from pe_manage import Manager
-from pe_utils import get_hash
+from pe_utils import get_hash_password
 
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
@@ -33,7 +34,7 @@ def sign_in():
     if validation_error:
         return {'error': True, 'text': validation_error}
 
-    hash_password = get_hash(password, True)
+    hash_password = get_hash_password(password)
     error_text = manager.check_user_error(email, hash_password)
     if error_text:
         return {'error': True, 'text': error_text}
@@ -59,7 +60,7 @@ def sign_up():
     if manager.get_user(email) is not None:
         return {'error': True, 'text': 'User exists'}
 
-    hash_password = get_hash(password, True)
+    hash_password = get_hash_password(password)
     if not manager.create_user(email, hash_password):
         return {'error': True, 'text': 'Something went wrong'}
 
@@ -121,7 +122,8 @@ def delete_event():
 
 if __name__ == '__main__':
     db_conn = DBConnecter()
-    manager = Manager(db_conn)
     create_tables(db_conn.engine)
+    manager = Manager(db_conn)
+    mailer = Mailer(db_conn)
     app.run(port='5000')
 
