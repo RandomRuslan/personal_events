@@ -89,9 +89,23 @@ class Manager:
 
     @staticmethod
     def get_validation_error(**data):
+        
+        def get_readable_key(key):
+            if key == 'ts':
+                return 'Date'
+            return key[0].upper() + key[1:]
+        
         error = []
 
         int_required = ['ts', 'tz']
+        key_to_max = {
+            'ts': 253402289940,  # 9999-12-31 23:59:00
+            'tz': 12
+        }
+        key_to_min = {
+            'ts': 0,    # 1970-01-01 00:00:00
+            'tz': -12
+        }
         key_to_len = {
             'email': 128,
             'password': 64,
@@ -103,17 +117,23 @@ class Manager:
         }
 
         for key, value in data.items():
-            if not value:
-                error.append(f'{key} is required')
-            elif key in key_to_len and len(value) > key_to_len[key]:
-                error.append(f'{key} is too long (max={key_to_len[key]})')
-            elif key in key_to_regex and not re.match(key_to_regex[key], value):
-                error.append(f'Incorrect format of {key}')
-            elif key in int_required:
+            if key in int_required:
                 try:
                     int(value)
                 except ValueError:
                     error.append(f'{key} must be number')
+                    continue
+
+            if not value:
+                error.append(f'{get_readable_key(key)} is required')
+            elif key in key_to_len and len(value) > key_to_len[key]:
+                error.append(f'{get_readable_key(key)} is too long (max={key_to_len[key]})')
+            elif key in key_to_regex and not re.match(key_to_regex[key], value):
+                error.append(f'Incorrect format of {key}')
+            elif key in key_to_max and key_to_max[key] < int(value):
+                error.append(f'{get_readable_key(key)} is too big')
+            elif key in key_to_min and key_to_min[key] > int(value):
+                error.append(f'{get_readable_key(key)} is too small')
 
         return '\n'.join(error) if error else None
 

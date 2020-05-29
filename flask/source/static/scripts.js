@@ -19,6 +19,7 @@ function getFieldsData(wrapper) {
 function flashPage() {
     flushFields(document);
     $('.event-card').remove();
+    EventManager.setLocationHash(null);
 }
 
 function flushFields(wrapper) {
