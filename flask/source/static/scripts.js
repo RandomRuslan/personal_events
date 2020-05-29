@@ -129,8 +129,14 @@ let EventManager = {
         $('#set_event', this.eventOverlay).click(this.addEvent.bind(this));
         $('.close-button', this.eventOverlay).click(this.closeEventForm.bind(this));
 
+        $('.event-card', this.eventsWrapper).click(this.focusOnCard.bind(this));
         $('.edit-event', this.eventsWrapper).click(this.editEvent.bind(this));
         $('.delete-event', this.eventsWrapper).click(this.deleteEvent.bind(this));
+
+        let hash = location.hash;
+        if (hash) {
+            this.setCardChoice(hash.slice(1));
+        }
 
         return this;
     },
@@ -151,6 +157,8 @@ let EventManager = {
         if (!isInsert) {
             this.eventsWrapper.append(el);
         }
+
+        this.setLocationHash(el.attr('id'));
     },
 
     showLoadedEvents: function(events) {
@@ -171,6 +179,7 @@ let EventManager = {
         $('.event-title', el).html(event.title);
         $('.event-note', el).html(event.note);
 
+        el.click(this.focusOnCard.bind(this));
         $('.edit-event', el).click(this.editEvent.bind(this));
         $('.delete-event', el).click(this.deleteEvent.bind(this));
 
@@ -256,8 +265,25 @@ let EventManager = {
                 alert(responseData.text);
             } else {
                 card.remove();
+                this.setLocationHash(null);
             }
         }.bind(this));
+    },
+
+    focusOnCard: function (e) {
+        this.setLocationHash($(e.currentTarget).attr('id'));
+    },
+
+    setLocationHash: function(hash) {
+        location.hash = hash || '';
+        this.setCardChoice(hash);
+    },
+
+    setCardChoice: function (id) {
+        $('.event-card.chosen', this.eventsWrapper).removeClass('chosen');
+        if (id) {
+            $('.event-card#' + id, this.eventsWrapper).addClass('chosen');
+        }
     }
 }
 

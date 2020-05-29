@@ -168,6 +168,10 @@ img, button {
     word-wrap: break-word;
 }
 
+#events_wrapper .event-card.chosen {
+    background-color: #ffc0cb;
+}
+
 #events_wrapper .event-card .datetime {
     padding: 0 10px;
 }
