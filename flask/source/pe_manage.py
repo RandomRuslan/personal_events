@@ -1,3 +1,4 @@
+import logging
 import re
 
 from pe_utils import convert_ts_to_date
@@ -12,7 +13,7 @@ class Manager:
         try:
             user_id = self.db_conn.store_user(email, password)
         except Exception as e:
-            print(e)
+            logging.exception(e)
             return None
 
         return user_id
@@ -20,7 +21,7 @@ class Manager:
     def get_user(self, email):
         user = self.db_conn.load_user(email)
         if not user:
-            print(f'User does not exist. Email: {email}')
+            logging.error(f'User does not exist. Email: {email}')
 
         return user
 
@@ -40,7 +41,7 @@ class Manager:
         try:
             event_id = self.db_conn.store_event(user['id'], event)
         except Exception as e:
-            print(e)
+            logging.exception(e)
             return None
 
         return event_id
@@ -50,7 +51,7 @@ class Manager:
         try:
             self.db_conn.edit_event(card_id, event)
         except Exception as e:
-            print(e)
+            logging.exception(e)
             return False
 
         return True
@@ -63,7 +64,7 @@ class Manager:
         try:
             self.db_conn.delete_event(user['id'], card_id)
         except Exception as e:
-            print(e)
+            logging.exception(e)
             return False
 
         return True
@@ -136,4 +137,3 @@ class Manager:
                 error.append(f'{get_readable_key(key)} is too small')
 
         return '\n'.join(error) if error else None
-

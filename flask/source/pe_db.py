@@ -1,3 +1,4 @@
+import logging
 from time import time
 
 import sqlalchemy as sa
@@ -160,7 +161,7 @@ class DBConnecter:
             session.add(obj)
             session.commit()
         except Exception as e:
-            print(e)
+            logging.exception(e)
             session.rollback()
             raise
         finally:

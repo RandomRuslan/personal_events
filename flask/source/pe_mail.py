@@ -1,3 +1,4 @@
+import logging
 import smtplib
 
 
@@ -29,7 +30,7 @@ class Mailer:
                 try:
                     self.db_conn.edit_event(event['cardId'], {'notified': True})
                 except Exception as e:
-                    print(e)
+                    logging.exception(e)
 
         smtp.quit()
 
@@ -48,8 +49,8 @@ class Mailer:
         try:
             smtp.sendmail(MAIL_USER, event['email'], text.encode('utf-8'))
         except Exception as e:
-            print(e)
+            logging.exception(e)
             return False
 
-        print(f'Message {event["title"]} is sent to {event["email"]}. Card id: {event["cardId"]}')
+        logging.warning(f'Message {event["title"]} is sent to {event["email"]}. Card id: {event["cardId"]}')
         return True

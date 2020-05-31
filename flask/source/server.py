@@ -1,4 +1,5 @@
 from flask import Flask, make_response, request, render_template, session
+import logging
 from time import time
 from uuid import uuid4
 
@@ -65,13 +66,13 @@ def sign_up():
         return {'error': True, 'text': 'Something went wrong'}
 
     session['user'] = email
-    return {'error': False, 'text': f'Welcome, {email}!', 'email': email}
+    return
 
 
 @app.route('/signout', methods=['POST'])
 def sign_out():
     session.pop('user', None)
-    return {'text': 'You should sign in'}
+    return
 
 
 @app.route('/set_event', methods=['POST'])
@@ -121,6 +122,13 @@ def delete_event():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        format=u'[%(asctime)s %(funcName)s:%(lineno)d] %(levelname)s %(message)s',
+        datefmt='%Y%m%d %H:%M:%S'
+    )
+    logging.warning('start server')
+
+
     db_conn = DBConnecter()
     create_tables(db_conn.engine)
     manager = Manager(db_conn)
