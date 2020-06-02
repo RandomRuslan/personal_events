@@ -12,7 +12,7 @@ def get_hash_password(value):
 
 def convert_ts_to_date(ts, tz):
     ts = int(ts) - int(tz) * 60 * 60
-    date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S').split()
+    date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M').split()
 
     return date
 

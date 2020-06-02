@@ -128,7 +128,6 @@ if __name__ == '__main__':
     )
     logging.warning('start server')
 
-
     db_conn = DBConnecter()
     create_tables(db_conn.engine)
     manager = Manager(db_conn)

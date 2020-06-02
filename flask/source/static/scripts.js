@@ -37,7 +37,6 @@ function convertTsToDate(ts) {
     let date = new Date();
     date.setTime(ts * 1000);
 
-    let seconds = getTwoCharFormat(date.getSeconds());
     let minutes = getTwoCharFormat(date.getMinutes());
     let hours = getTwoCharFormat(date.getHours());
     let day = getTwoCharFormat(date.getDate());
@@ -45,7 +44,7 @@ function convertTsToDate(ts) {
     let year = date.getFullYear();
     return [
         year + '-' + month + '-' + day,
-        hours + ":" + minutes + ":" + seconds
+        hours + ":" + minutes
     ];
 }
 
