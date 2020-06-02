@@ -12,8 +12,6 @@ from pe_utils import get_hash_password
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
 
-users = {}
-
 
 @app.route('/', methods=['GET'])
 def main():
@@ -66,13 +64,13 @@ def sign_up():
         return {'error': True, 'text': 'Something went wrong'}
 
     session['user'] = email
-    return
+    return {}
 
 
 @app.route('/signout', methods=['POST'])
 def sign_out():
     session.pop('user', None)
-    return
+    return {}
 
 
 @app.route('/set_event', methods=['POST'])

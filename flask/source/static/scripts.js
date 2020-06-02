@@ -275,7 +275,10 @@ let EventManager = {
     },
 
     setLocationHash: function(hash) {
+        let scrollPosition = this.eventsWrapper.scrollTop();
         location.hash = hash || '';
+        this.eventsWrapper.scrollTop(scrollPosition);
+
         this.setCardChoice(hash);
     },
 
