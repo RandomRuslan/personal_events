@@ -20,6 +20,18 @@
         </div>
     </div>
     <div id="events_wrapper">
+        <div id="event_filter">
+            <div>
+                <input type="date" name="from" /> - <input type="date" name="to" />
+                <select>
+                    <option data-period="-">Manual</option>
+                    <option data-period="d">Day</option>
+                    <option data-period="w">Week</option>
+                    <option data-period="m">Month</option>
+                    <option data-period="y">Year</option>
+                </select>
+            </div>
+        </div>
         <div id="event_overlay">
             <div id="settable_event">
                 <div class="close-button">x</div>

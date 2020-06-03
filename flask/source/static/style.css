@@ -18,6 +18,7 @@ input {
     width: 60%;
     margin: 10px 0;
     height: 26px;
+    padding-right: 0;
 }
 
 img, button {
@@ -215,4 +216,32 @@ img, button {
     top: 10px;
     right: 20px;
     width: 80px;
+}
+
+#event_filter {
+    position: relative;
+    width: 70%;
+    margin: 5px auto;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: left;
+    background-color: rgba(184,0,177,0.3);
+}
+
+#event_filter > * {
+    display: inline-block;
+    width: 80%;
+}
+
+#event_filter input {
+    height: 15px;
+    width: 30%;
+    margin: 0;
+}
+
+#event_filter select {
+    height: 25px;
+    width: 20%;
+    margin-left: 10px;
+    background-color: #fff;
 }

@@ -113,6 +113,8 @@ let EventManager = {
 
     eventMessage: null,
     cardIdInputTemplate: null,
+
+    eventFilter: null,
     
     init: function () {
         this.eventsWrapper = $('#events_wrapper');
@@ -132,6 +134,8 @@ let EventManager = {
         $('.event-card', this.eventsWrapper).click(this.focusOnCard.bind(this));
         $('.edit-event', this.eventsWrapper).click(this.editEvent.bind(this));
         $('.delete-event', this.eventsWrapper).click(this.deleteEvent.bind(this));
+
+        this.eventFilter = EventFilter.init(this);
 
         let hash = location.hash;
         if (hash) {
@@ -287,6 +291,78 @@ let EventManager = {
         if (id) {
             $('.event-card#' + id, this.eventsWrapper).addClass('chosen');
         }
+    }
+}
+
+let EventFilter = {
+    filterBlock: null,
+
+    periodSelect: null,
+    fromInput: null,
+    toInput: null,
+
+    init: function (eventManager) {
+        this.filterBlock = $('#event_filter', eventManager.eventsWrapper);
+        this.periodSelect = $('select', this.filterBlock);
+        this.fromInput = $('input[name="from"]', this.filterBlock);
+        this.toInput = $('input[name="to"]', this.filterBlock);
+
+        $('input', this.filterBlock).change(this.onInputManualChange.bind(this));
+        this.periodSelect.change(this.onSelectChange.bind(this));
+
+        return this;
+    },
+
+    onInputManualChange: function(e) {
+        this.selectPeriodOption('-');
+    },
+
+    onSelectChange: function(e) {
+        let period = $(':selected', this.periodSelect).data('period');
+        this.selectPeriodOption(period);
+
+        let dates = this.getPeriodDates(period);
+        this.fromInput.val(dates[0]);
+        this.toInput.val(dates[1]);
+    },
+
+    selectPeriodOption: function(period) {
+        $('option', this.periodSelect).attr('selected', false);
+        $('[data-period="' + period + '"]', this.periodSelect).attr('selected', true);
+    },
+
+    getPeriodDates: function (period) {
+        let from = new Date();
+        let to = new Date();
+
+        switch (period) {
+            case 'd':
+                from.setTime(from.getTime() - 60 * 60 * 24 * 1000);
+                break;
+            case 'w':
+                from.setTime(from.getTime() - 60 * 60 * 24 * 7 * 1000);
+                break;
+            case 'm':
+                let month = from.getMonth();
+                if (month === 0) {
+                    from.setFullYear(from.getFullYear() - 1);
+                    from.setMonth(11);
+                } else {
+                    from.setMonth(month - 1);
+                }
+                break;
+            case 'y':
+                from.setFullYear(from.getFullYear() - 1)
+                break;
+            case '-':
+            default:
+                return ['', '']
+        }
+
+        return [
+            convertTsToDate(from.getTime() / 1000)[0],
+            convertTsToDate(to.getTime() / 1000)[0]
+        ];
     }
 }
 
