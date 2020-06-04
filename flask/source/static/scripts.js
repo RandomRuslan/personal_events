@@ -16,14 +16,6 @@ function getFieldsData(wrapper) {
     return !emptyError ? data : null;
 }
 
-function flashPage() {
-    flushFields(document);
-    $('.event-card').remove();
-
-    EventManager.setLocationHash(null);
-    EventFilter.flushFilters()
-}
-
 function flushFields(wrapper) {
     $('input, textarea', wrapper).each(function() {
         $(this).removeClass('error').val('');
@@ -63,7 +55,7 @@ let AuthManager = {
 
     eventCardTemplate: null,
 
-    init: function (eventManager) {
+    init: function(eventManager) {
         this.eventManager = eventManager;
 
         this.authWrapper = $('#auth_wrapper');
@@ -74,8 +66,8 @@ let AuthManager = {
 
         this.signOutButton = $('#sign_out');
 
-        this.signInButton.click(function () { this.authRequest('/signin') }.bind(this));
-        this.signUpButton.click(function () { this.authRequest('/signup') }.bind(this));
+        this.signInButton.click(function() { this.authRequest('/signin') }.bind(this));
+        this.signUpButton.click(function() { this.authRequest('/signup') }.bind(this));
         this.signOutButton.click(this.signOut.bind(this));
         return this;
     },
@@ -98,9 +90,16 @@ let AuthManager = {
         }
     },
 
-    signOut: function () {
-        $.post('/signout', {}, function (responseData) {
-            flashPage();
+    signOut: function() {
+        $.post('/signout', {}, function(responseData) {
+            flushFields(document);
+
+            $('.event-card', this.eventManager.eventsWrapper).remove();
+            this.eventManager.setLocationHash(null);
+
+            this.eventManager.eventFilter.flushFilters();
+            this.eventManager.eventFilter.selectPeriodOption('-');
+
             this.authWrapper.addClass('no-auth');
         }.bind(this));
     }
@@ -118,7 +117,7 @@ let EventManager = {
 
     eventFilter: null,
     
-    init: function () {
+    init: function() {
         this.eventsWrapper = $('#events_wrapper');
         this.eventOverlay = $('#event_overlay', this.eventsWrapper);
         this.setEventForm = $('#settable_event', this.eventOverlay);
@@ -129,13 +128,20 @@ let EventManager = {
         this.eventMessage = $('#event_message', this.authBlock);
         this.cardIdInputTemplate = $('#card_id', this.eventOverlay).remove();
 
-        $('#show_event_overlay', this.eventsWrapper).click(function () { this.showEventForm() }.bind(this));
+        $('#show_event_overlay', this.eventsWrapper).click(function() { this.showEventForm() }.bind(this));
         $('#set_event', this.eventOverlay).click(this.setEvent.bind(this));
         $('.close-button', this.eventOverlay).click(this.closeEventForm.bind(this));
 
-        $('.event-card', this.eventsWrapper).click(this.focusOnCard.bind(this));
         $('.edit-event', this.eventsWrapper).click(this.editEvent.bind(this));
         $('.delete-event', this.eventsWrapper).click(this.deleteEvent.bind(this));
+
+        $('.event-card', this.eventsWrapper).click(this.focusOnCard.bind(this));
+        $(document).click(function(e) {
+            let card = $('.event-card', this.eventsWrapper);
+            if (!card.is(e.target) && card.has(e.target).length === 0) {
+                this.setLocationHash(null);
+            }
+        }.bind(this));
 
         this.eventFilter = EventFilter.init(this);
 
@@ -193,7 +199,7 @@ let EventManager = {
         return el;
     },
 
-    showEventForm: function (data) {
+    showEventForm: function(data) {
         if (data) {
             this.setEventForm.append(this.cardIdInputTemplate.clone());
             $('input, textarea', this.setEventForm).each(function() {
@@ -205,7 +211,7 @@ let EventManager = {
         this.eventOverlay.show();
     },
 
-    closeEventForm: function () {
+    closeEventForm: function() {
         flushFields(this.setEventForm);
         this.eventMessage.html('');
         $('#card_id', this.setEventForm).remove();
@@ -224,7 +230,7 @@ let EventManager = {
         return isAnyNewData;
     },
 
-    setEvent: function () {
+    setEvent: function() {
         let data = getFieldsData(this.setEventForm);
         if (data) {
             let cardId = data.cardid;
@@ -237,7 +243,7 @@ let EventManager = {
             delete data.date;
             delete data.time;
 
-            $.post('/set_event', data, function (responseData) {
+            $.post('/set_event', data, function(responseData) {
                 console.log(responseData);
                 if (responseData.error) {
                     this.eventMessage.text(responseData.text);
@@ -252,7 +258,7 @@ let EventManager = {
         }
     },
 
-    editEvent: function (e) {
+    editEvent: function(e) {
         let card = $(e.target).closest('.event-card');
         let data = {'cardid': card.attr('id')};
         
@@ -264,10 +270,10 @@ let EventManager = {
         this.showEventForm(data);
     },
 
-    deleteEvent: function (e) {
+    deleteEvent: function(e) {
         let card = $(e.target).closest('.event-card');
         let cardId = card.attr('id');
-        $.post('/delete_event', {'cardId': cardId}, function (responseData) {
+        $.post('/delete_event', {'cardId': cardId}, function(responseData) {
             if (responseData.error) {
                 alert(responseData.text);
             } else {
@@ -277,7 +283,7 @@ let EventManager = {
         }.bind(this));
     },
 
-    focusOnCard: function (e) {
+    focusOnCard: function(e) {
         this.setLocationHash($(e.currentTarget).attr('id'));
     },
 
@@ -289,7 +295,7 @@ let EventManager = {
         this.setCardChoice(hash);
     },
 
-    setCardChoice: function (id) {
+    setCardChoice: function(id) {
         $('.event-card.chosen', this.eventsWrapper).removeClass('chosen');
         if (id) {
             $('.event-card#' + id, this.eventsWrapper).addClass('chosen');
@@ -307,7 +313,7 @@ let EventFilter = {
     toInput: null,
     titleInput: null,
 
-    init: function (eventManager) {
+    init: function(eventManager) {
         this.eventManager = eventManager;
         this.filterWrapper = $('#event_filter', eventManager.eventsWrapper);
 
@@ -334,7 +340,7 @@ let EventFilter = {
         let filterBlock = filterButton.closest('.filter-block');
 
         let hasEmptyInput = false;
-        $('input', filterBlock).each(function (index, filterInput) {
+        $('input', filterBlock).each(function(index, filterInput) {
             filterInput = $(filterInput);
             if (!filterInput.val()) {
                 filterInput.addClass('error');
@@ -367,8 +373,8 @@ let EventFilter = {
         this.selectPeriodOption(period);
 
         let dates = this.getPeriodDates(period);
-        this.fromInput.val(dates[0]);
-        this.toInput.val(dates[1]);
+        this.fromInput.removeClass('error').val(dates[0]);
+        this.toInput.removeClass('error').val(dates[1]);
         
         let filterBlock = $(e.target).closest('.filter-block');
         let filterButton = $('.filter-button', filterBlock);
@@ -381,7 +387,7 @@ let EventFilter = {
         $('[data-period="' + period + '"]', this.periodSelect).attr('selected', true);
     },
 
-    getPeriodDates: function (period) {
+    getPeriodDates: function(period) {
         let from = new Date();
         let to = new Date();
 
@@ -415,17 +421,17 @@ let EventFilter = {
         ];
     },
 
-    applyFilters: function () {
+    applyFilters: function() {
         this.eventManager.setLocationHash(null);
         let cards = $('.event-card', this.eventManager.eventsWrapper);
         cards.show();
 
-        $('.filter-button.clicked', this.filterWrapper).each(function (index, button) {
+        $('.filter-button.clicked', this.filterWrapper).each(function(index, button) {
             button = $(button);
             let filterType = button.data('type');
             switch (filterType) {
                 case('period'):
-                    cards.each(function (index, card) {
+                    cards.each(function(index, card) {
                         card = $(card);
                         let ts = card.data('ts');
 
@@ -447,7 +453,7 @@ let EventFilter = {
                     break;
                 case('title'):
                     let titleFilter = this.titleInput.val().toLocaleLowerCase();
-                    cards.each(function (index, card) {
+                    cards.each(function(index, card) {
                         card = $(card);
                         let cardTitle = $('.event-title', card).text().toLocaleLowerCase();
                         if (cardTitle.indexOf(titleFilter) === -1) {
@@ -461,7 +467,7 @@ let EventFilter = {
         }.bind(this));
     },
 
-    flushFilters: function () {
+    flushFilters: function() {
         $('.filter-button.clicked').each(function() {
             $(this).removeClass('clicked');
         });
@@ -470,7 +476,7 @@ let EventFilter = {
     }
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     let eventManager = EventManager.init();
     AuthManager.init(eventManager);
 })
