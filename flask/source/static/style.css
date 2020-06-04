@@ -250,7 +250,7 @@ img, button {
     background-color: #fff;
 }
 
-#event_filter .search-button {
+#event_filter .filter-button {
     position: absolute;
     right: 20px;
     height: 24px;
@@ -258,6 +258,6 @@ img, button {
     background-color: #fff;
 }
 
-#event_filter .search-button.clicked {
+#event_filter .filter-button.clicked {
     background-color: #00bfff;
 }

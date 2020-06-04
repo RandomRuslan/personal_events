@@ -18,6 +18,10 @@ function getFieldsData(wrapper) {
 
 function flashPage() {
     flushFields(document);
+    $('.clicked').each(function() {
+        $(this).removeClass('clicked');
+    });
+
     $('.event-card').remove();
     EventManager.setLocationHash(null);
 }
@@ -302,21 +306,39 @@ let EventFilter = {
     toInput: null,
 
     init: function (eventManager) {
-        this.filterBlock = $('#event_filter', eventManager.eventsWrapper);
-        this.periodSelect = $('select', this.filterBlock);
-        this.fromInput = $('input[name="from"]', this.filterBlock);
-        this.toInput = $('input[name="to"]', this.filterBlock);
+        this.filterWrapper = $('#event_filter', eventManager.eventsWrapper);
+        this.periodSelect = $('select', this.filterWrapper);
+        this.fromInput = $('input[name="from"]', this.filterWrapper);
+        this.toInput = $('input[name="to"]', this.filterWrapper);
 
-        $('#period_filter input', this.filterBlock).change(this.onInputManualChange.bind(this));
+        $('input', this.filterWrapper).change(this.onInputManualChange.bind(this));
         this.periodSelect.change(this.onSelectChange.bind(this));
 
-        $('.search-button', this.filterBlock).click(this.onClickSearchButton.bind(this));
+        $('.filter-button', this.filterWrapper).click(this.onClickFilterButton.bind(this));
 
         return this;
     },
 
+    switchFilterButton: function(button, switchTo) {
+        button.toggleClass('clicked', switchTo !== undefined ? switchTo : !button.hasClass('clicked'));
+    },
+
+    onClickFilterButton: function(e) {
+        let filterBlock = $(e.target).closest('.filter-block');
+        let filterButton = $('.filter-button', filterBlock);
+        this.switchFilterButton(filterButton);
+    },
+
     onInputManualChange: function(e) {
-        this.selectPeriodOption('-');
+        let filterBlock = $(e.target).closest('.filter-block');
+        let filterButton = $('.filter-button', filterBlock);
+        let filterType = filterButton.data('type');
+        
+        if (filterType === 'period') {
+            this.selectPeriodOption('-');
+        }
+        
+        this.switchFilterButton(filterButton, false);
     },
 
     onSelectChange: function(e) {
@@ -326,6 +348,11 @@ let EventFilter = {
         let dates = this.getPeriodDates(period);
         this.fromInput.val(dates[0]);
         this.toInput.val(dates[1]);
+        
+        let filterBlock = $(e.target).closest('.filter-block');
+        let filterButton = $('.filter-button', filterBlock);
+
+        this.switchFilterButton(filterButton, false);
     },
 
     selectPeriodOption: function(period) {
@@ -365,11 +392,6 @@ let EventFilter = {
             convertTsToDate(from.getTime() / 1000)[0],
             convertTsToDate(to.getTime() / 1000)[0]
         ];
-    },
-
-    onClickSearchButton: function (e) {
-        let searchButton = $(e.target);
-        searchButton.toggleClass('clicked', !searchButton.hasClass('clicked'));
     }
 }
 
