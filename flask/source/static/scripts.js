@@ -18,12 +18,10 @@ function getFieldsData(wrapper) {
 
 function flashPage() {
     flushFields(document);
-    $('.clicked').each(function() {
-        $(this).removeClass('clicked');
-    });
-
     $('.event-card').remove();
+
     EventManager.setLocationHash(null);
+    EventFilter.flushFilters()
 }
 
 function flushFields(wrapper) {
@@ -132,7 +130,7 @@ let EventManager = {
         this.cardIdInputTemplate = $('#card_id', this.eventOverlay).remove();
 
         $('#show_event_overlay', this.eventsWrapper).click(function () { this.showEventForm() }.bind(this));
-        $('#set_event', this.eventOverlay).click(this.addEvent.bind(this));
+        $('#set_event', this.eventOverlay).click(this.setEvent.bind(this));
         $('.close-button', this.eventOverlay).click(this.closeEventForm.bind(this));
 
         $('.event-card', this.eventsWrapper).click(this.focusOnCard.bind(this));
@@ -167,6 +165,7 @@ let EventManager = {
         }
 
         this.setLocationHash(el.attr('id'));
+        this.eventFilter.flushFilters();
     },
 
     showLoadedEvents: function(events) {
@@ -225,7 +224,7 @@ let EventManager = {
         return isAnyNewData;
     },
 
-    addEvent: function () {
+    setEvent: function () {
         let data = getFieldsData(this.setEventForm);
         if (data) {
             let cardId = data.cardid;
@@ -299,17 +298,23 @@ let EventManager = {
 }
 
 let EventFilter = {
-    filterBlock: null,
+    eventManager: null,
+
+    filterWrapper: null,
 
     periodSelect: null,
     fromInput: null,
     toInput: null,
+    titleInput: null,
 
     init: function (eventManager) {
+        this.eventManager = eventManager;
         this.filterWrapper = $('#event_filter', eventManager.eventsWrapper);
+
         this.periodSelect = $('select', this.filterWrapper);
         this.fromInput = $('input[name="from"]', this.filterWrapper);
         this.toInput = $('input[name="to"]', this.filterWrapper);
+        this.titleInput = $('input[name="title-filter"]', this.filterWrapper);
 
         $('input', this.filterWrapper).change(this.onInputManualChange.bind(this));
         this.periodSelect.change(this.onSelectChange.bind(this));
@@ -321,18 +326,34 @@ let EventFilter = {
 
     switchFilterButton: function(button, switchTo) {
         button.toggleClass('clicked', switchTo !== undefined ? switchTo : !button.hasClass('clicked'));
+        this.applyFilters();
     },
 
     onClickFilterButton: function(e) {
-        let filterBlock = $(e.target).closest('.filter-block');
-        let filterButton = $('.filter-button', filterBlock);
-        this.switchFilterButton(filterButton);
+        let filterButton = $(e.target);
+        let filterBlock = filterButton.closest('.filter-block');
+
+        let hasEmptyInput = false;
+        $('input', filterBlock).each(function (index, filterInput) {
+            filterInput = $(filterInput);
+            if (!filterInput.val()) {
+                filterInput.addClass('error');
+                hasEmptyInput = true;
+            } else {
+                filterInput.removeClass('error');
+            }
+        }.bind(this));
+
+        this.switchFilterButton(filterButton, hasEmptyInput ? false : undefined);
     },
 
     onInputManualChange: function(e) {
-        let filterBlock = $(e.target).closest('.filter-block');
+        let filterInput = $(e.target);
+        let filterBlock = filterInput.closest('.filter-block');
         let filterButton = $('.filter-button', filterBlock);
         let filterType = filterButton.data('type');
+
+        filterInput.removeClass('error');
         
         if (filterType === 'period') {
             this.selectPeriodOption('-');
@@ -392,6 +413,60 @@ let EventFilter = {
             convertTsToDate(from.getTime() / 1000)[0],
             convertTsToDate(to.getTime() / 1000)[0]
         ];
+    },
+
+    applyFilters: function () {
+        this.eventManager.setLocationHash(null);
+        let cards = $('.event-card', this.eventManager.eventsWrapper);
+        cards.show();
+
+        $('.filter-button.clicked', this.filterWrapper).each(function (index, button) {
+            button = $(button);
+            let filterType = button.data('type');
+            switch (filterType) {
+                case('period'):
+                    cards.each(function (index, card) {
+                        card = $(card);
+                        let ts = card.data('ts');
+
+                        let fromDate = this.fromInput.val();
+                        let toDate = this.toInput.val();
+                        if (fromDate > toDate) {
+                            [fromDate, toDate] = [toDate, fromDate];
+                            this.fromInput.val(fromDate);
+                            this.toInput.val(toDate);
+                        }
+
+                        let fromTs = Date.parse(fromDate + '@00:00:00')/1000;
+                        let toTs = Date.parse(toDate + '@23:59:59')/1000;
+
+                        if (ts < fromTs || toTs < ts) {
+                            card.hide();
+                        }
+                    }.bind(this));
+                    break;
+                case('title'):
+                    let titleFilter = this.titleInput.val().toLocaleLowerCase();
+                    cards.each(function (index, card) {
+                        card = $(card);
+                        let cardTitle = $('.event-title', card).text().toLocaleLowerCase();
+                        if (cardTitle.indexOf(titleFilter) === -1) {
+                            card.hide();
+                        }
+                    }.bind(this));
+                    break;
+                default:
+                    console.log('Unknown filter type:', filterType);
+            }
+        }.bind(this));
+    },
+
+    flushFilters: function () {
+        $('.filter-button.clicked').each(function() {
+            $(this).removeClass('clicked');
+        });
+
+        this.applyFilters();
     }
 }
 
