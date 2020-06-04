@@ -307,8 +307,10 @@ let EventFilter = {
         this.fromInput = $('input[name="from"]', this.filterBlock);
         this.toInput = $('input[name="to"]', this.filterBlock);
 
-        $('input', this.filterBlock).change(this.onInputManualChange.bind(this));
+        $('#period_filter input', this.filterBlock).change(this.onInputManualChange.bind(this));
         this.periodSelect.change(this.onSelectChange.bind(this));
+
+        $('.search-button', this.filterBlock).click(this.onClickSearchButton.bind(this));
 
         return this;
     },
@@ -363,6 +365,11 @@ let EventFilter = {
             convertTsToDate(from.getTime() / 1000)[0],
             convertTsToDate(to.getTime() / 1000)[0]
         ];
+    },
+
+    onClickSearchButton: function (e) {
+        let searchButton = $(e.target);
+        searchButton.toggleClass('clicked', !searchButton.hasClass('clicked'));
     }
 }
 

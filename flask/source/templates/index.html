@@ -21,7 +21,8 @@
     </div>
     <div id="events_wrapper">
         <div id="event_filter">
-            <div>
+            <div class="filter-block" id="period_filter">
+                Date filter:
                 <input type="date" name="from" /> - <input type="date" name="to" />
                 <select>
                     <option data-period="-">Manual</option>
@@ -30,6 +31,12 @@
                     <option data-period="m">Month</option>
                     <option data-period="y">Year</option>
                 </select>
+                <img class="search-button" data="period" src="{{ url_for('static', filename='images/search.png') }}" alt="search" />
+            </div>
+            <div class="filter-block" id="title_filter">
+                Title filter:
+                <input type="text" name="title-filter" />
+                <img class="search-button" data="title" src="{{ url_for('static', filename='images/search.png') }}" alt="search" />
             </div>
         </div>
         <div id="event_overlay">
