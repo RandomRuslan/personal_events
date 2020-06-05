@@ -80,7 +80,6 @@ let AuthManager = {
     },
 
     afterAuth: function(responseData) {
-        console.log(responseData);
         this.authErrorMessage.toggle(responseData.error);
         if (responseData.error) {
             this.authErrorMessage.text(responseData.text);
@@ -137,15 +136,19 @@ let EventManager = {
 
         $('.event-card', this.eventsWrapper).click(this.focusOnCard.bind(this));
         $(document).click(function(e) {
-            let card = $('.event-card', this.eventsWrapper);
-            if (!card.is(e.target) && card.has(e.target).length === 0) {
+            let keepHashElem = $('.event-card, #event_overlay', this.eventsWrapper);
+            if (
+                document.location.hash
+                && !keepHashElem.is(e.target)
+                && keepHashElem.has(e.target).length === 0
+            ) {
                 this.setLocationHash(null);
             }
         }.bind(this));
 
         this.eventFilter = EventFilter.init(this);
 
-        let hash = location.hash;
+        let hash = document.location.hash;
         if (hash) {
             this.setCardChoice(hash.slice(1));
         }
@@ -170,8 +173,8 @@ let EventManager = {
             this.eventsWrapper.append(el);
         }
 
-        this.setLocationHash(el.attr('id'));
         this.eventFilter.flushFilters();
+        this.setLocationHash(el.attr('id'));
     },
 
     showLoadedEvents: function(events) {
@@ -244,7 +247,6 @@ let EventManager = {
             delete data.time;
 
             $.post('/set_event', data, function(responseData) {
-                console.log(responseData);
                 if (responseData.error) {
                     this.eventMessage.text(responseData.text);
                 } else {
@@ -289,7 +291,7 @@ let EventManager = {
 
     setLocationHash: function(hash) {
         let scrollPosition = this.eventsWrapper.scrollTop();
-        location.hash = hash || '';
+        document.location.hash = hash || '';
         this.eventsWrapper.scrollTop(scrollPosition);
 
         this.setCardChoice(hash);
