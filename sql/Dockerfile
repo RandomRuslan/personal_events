@@ -13,10 +13,6 @@ RUN apt-get update \
 
 USER postgres
 
-#RUN initdb \
-#    && echo "host all all 0.0.0.0/0 trust" >> $PGDATA/pg_hba.conf \
-#    && pg_ctl start
-
 ENTRYPOINT ["docker-entrypoint.sh"]
 EXPOSE 5432
 CMD ["postgres"]
