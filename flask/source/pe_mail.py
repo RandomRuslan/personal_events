@@ -1,5 +1,6 @@
 import logging
 import smtplib
+from typing import List, NoReturn
 
 
 from constants import MAIL_USER, MAIL_PWD
@@ -12,12 +13,12 @@ class Mailer:
         self.db_conn = db_conn
         Repeater(60, self.check_notification_need).start()
 
-    def check_notification_need(self):
+    def check_notification_need(self) -> NoReturn:
         events = self.db_conn.load_events_for_mailing()
         if events:
             self.send_mails(events)
             
-    def send_mails(self, events):
+    def send_mails(self, events: List) -> NoReturn:
         smtp = smtplib.SMTP('smtp.gmail.com', 587)
         smtp.starttls()
         smtp.login(MAIL_USER, MAIL_PWD)
@@ -35,7 +36,7 @@ class Mailer:
         smtp.quit()
 
     @staticmethod
-    def send_mail(smtp, event):
+    def send_mail(smtp: smtplib.SMTP, event: dict) -> bool:
         ts = int(event['ts'])
         tz = int(event['tz'])
         date = ' '.join(convert_ts_to_date(ts, tz))

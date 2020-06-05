@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Any, Dict, List, Union
 
 from pe_utils import convert_ts_to_date
 
@@ -9,7 +10,7 @@ class Manager:
     def __init__(self, db_conn):
         self.db_conn = db_conn
 
-    def create_user(self, email, password):
+    def create_user(self, email: str, password: str) -> Union[int, None]:
         try:
             user_id = self.db_conn.store_user(email, password)
         except Exception as e:
@@ -18,14 +19,14 @@ class Manager:
 
         return user_id
 
-    def get_user(self, email):
+    def get_user(self, email: str) -> Union[Dict, None]:
         user = self.db_conn.load_user(email)
         if not user:
             logging.error(f'User does not exist. Email: {email}')
 
         return user
 
-    def check_user_error(self, email, hash_password):
+    def check_user_error(self, email: str, hash_password: str) -> Union[str, None]:
         user = self.get_user(email)
         if not user:
             return 'User does not exist'
@@ -33,7 +34,9 @@ class Manager:
         if hash_password != user['password']:
             return 'Incorrect email/password'
 
-    def create_event(self, email, event):
+        return None
+
+    def create_event(self, email: str, event: Dict) -> Union[int, None]:
         user = self.get_user(email)
         if not user:
             return None
@@ -46,7 +49,7 @@ class Manager:
 
         return event_id
 
-    def edit_event(self, card_id, event):
+    def edit_event(self, card_id: str, event: Dict) -> bool:
         event['notified'] = False
         try:
             self.db_conn.edit_event(card_id, event)
@@ -56,7 +59,7 @@ class Manager:
 
         return True
 
-    def delete_event(self, email, card_id):
+    def delete_event(self, email: str, card_id: str) -> bool:
         user = self.get_user(email)
         if not user:
             return False
@@ -69,7 +72,7 @@ class Manager:
 
         return True
 
-    def get_events(self, email):
+    def get_events(self, email: str) -> List[Dict]:
         user = self.get_user(email)
         if not user:
             return []
@@ -80,7 +83,7 @@ class Manager:
         return events
 
     @staticmethod
-    def prepare_event(event):
+    def prepare_event(event: Dict) -> Dict:
         event['date'] = convert_ts_to_date(event['ts'], event['tz'])
 
         event.pop('id', None)
@@ -89,9 +92,9 @@ class Manager:
         return event
 
     @staticmethod
-    def get_validation_error(**data):
+    def get_validation_error(**data: Any) -> Union[str, None]:
         
-        def get_readable_key(key):
+        def get_readable_key(key: str) -> str:
             if key == 'ts':
                 return 'Date'
             return key[0].upper() + key[1:]

@@ -1,16 +1,17 @@
+from datetime import datetime
 import hashlib
 from threading import Timer
-from datetime import datetime
+from typing import List, Union
 
 from constants import PWD_SALT
 
 
-def get_hash_password(value):
+def get_hash_password(value: str) -> str:
     value += PWD_SALT
     return hashlib.sha256(value.encode('utf-8')).hexdigest()
 
 
-def convert_ts_to_date(ts, tz):
+def convert_ts_to_date(ts: Union[int, str], tz: Union[int, str]) -> List[str]:
     ts = int(ts) - int(tz) * 60 * 60
     date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M').split()
 

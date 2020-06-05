@@ -1,5 +1,6 @@
 import logging
 from time import time
+from typing import Dict, List, Union, NoReturn
 
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
@@ -12,7 +13,7 @@ from constants import DB_URL
 Base = declarative_base()
 
 
-def create_tables(engine):
+def create_tables(engine) -> NoReturn:
     engine.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL,
@@ -62,14 +63,14 @@ class DBConnecter:
         self.engine = sa.create_engine(DB_URL)
         self.DBSession = sessionmaker(bind=self.engine)
 
-    def store_user(self, email, password):
+    def store_user(self, email: str, password: str) -> Union[int, None]:
         user_t = UserT(
             email=email,
             password=password,
         )
         return self._store(user_t)
 
-    def load_user(self, email):
+    def load_user(self, email: str) -> Union[Dict, None]:
         session = self.DBSession()
         row = session.query(UserT).filter(UserT.email == email).first()
         session.close()
@@ -80,7 +81,7 @@ class DBConnecter:
             'password': row.password
         } if row else None
 
-    def store_event(self, user_id, event):
+    def store_event(self, user_id: int, event: dict) -> Union[int, None]:
         event_t = EventT(
             userid=user_id,
             title=event['title'],
@@ -91,13 +92,13 @@ class DBConnecter:
         )
         return self._store(event_t)
 
-    def edit_event(self, card_id, event):
+    def edit_event(self, card_id: str, event: Dict) -> NoReturn:
         session = self.DBSession()
         session.query(EventT).filter(EventT.cardid == card_id).update(event)
         session.commit()
         session.close()
 
-    def delete_event(self, user_id, card_id):
+    def delete_event(self, user_id: int, card_id: str) -> NoReturn:
         session = self.DBSession()
         session.delete(
             session.query(EventT)
@@ -108,7 +109,7 @@ class DBConnecter:
         session.commit()
         session.close()
 
-    def load_events(self, user_id):
+    def load_events(self, user_id: int) -> List[Dict]:
         session = self.DBSession()
         rows = session.query(EventT)\
             .filter(EventT.userid == user_id)\
@@ -129,7 +130,7 @@ class DBConnecter:
             
         return events
 
-    def load_events_for_mailing(self):
+    def load_events_for_mailing(self) -> List[Dict]:
         now = int(time())
 
         session = self.DBSession()
@@ -155,7 +156,7 @@ class DBConnecter:
 
         return events
 
-    def _store(self, obj):
+    def _store(self, obj: Union[UserT, EventT]) -> Union[int, None]:
         session = self.DBSession()
         try:
             session.add(obj)
