@@ -9,5 +9,5 @@ DB_URL = f'postgresql://{DB_USER}:{DB_PWD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
 PWD_SALT = 'k32jb4k2j3'
 
-MAIL_USER = ''
-MAIL_PWD = ''
+MAIL_USER = ''  # 'example@gmail.com'
+MAIL_PWD = ''   # 'password_example'

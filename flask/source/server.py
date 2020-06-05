@@ -121,6 +121,7 @@ def delete_event():
 
 if __name__ == '__main__':
     logging.basicConfig(
+        level=logging.INFO,
         format=u'[%(asctime)s %(funcName)s:%(lineno)d] %(levelname)s %(message)s',
         datefmt='%Y%m%d %H:%M:%S'
     )

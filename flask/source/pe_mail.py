@@ -14,14 +14,26 @@ class Mailer:
         Repeater(60, self.check_notification_need).start()
 
     def check_notification_need(self) -> NoReturn:
-        events = self.db_conn.load_events_for_mailing()
-        if events:
-            self.send_mails(events)
-            
-    def send_mails(self, events: List) -> NoReturn:
+        if not all([MAIL_USER, MAIL_PWD]):
+            logging.info('You need to define MAIL_USER and MAIL_PWD for mailing')
+            return
+
         smtp = smtplib.SMTP('smtp.gmail.com', 587)
         smtp.starttls()
-        smtp.login(MAIL_USER, MAIL_PWD)
+        try:
+            smtp.login(MAIL_USER, MAIL_PWD)
+        except smtplib.SMTPAuthenticationError as e:
+            logging.error(e)
+            smtp.quit()
+            return
+
+        events = self.db_conn.load_events_for_mailing()
+        if events:
+            self.send_mails(smtp, events)
+
+        smtp.quit()
+            
+    def send_mails(self, smtp: smtplib.SMTP, events: List) -> NoReturn:
         for event in events:
             if self.send_mail(smtp, event):
                 event['notified'] = True
@@ -32,8 +44,6 @@ class Mailer:
                     self.db_conn.edit_event(event['cardId'], {'notified': True})
                 except Exception as e:
                     logging.exception(e)
-
-        smtp.quit()
 
     @staticmethod
     def send_mail(smtp: smtplib.SMTP, event: dict) -> bool:
@@ -53,5 +63,5 @@ class Mailer:
             logging.exception(e)
             return False
 
-        logging.warning(f'Message {event["title"]} is sent to {event["email"]}. Card id: {event["cardId"]}')
+        logging.info(f'Message {event["title"]} is sent to {event["email"]}. Card id: {event["cardId"]}')
         return True
