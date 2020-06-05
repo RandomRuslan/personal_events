@@ -1,0 +1,265 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    color: #000;
+    background-image: radial-gradient(ellipse farthest-corner at right bottom, #adc0ce 0%, #b88eec 50%, #e4e4e4 100%);
+    font-family: 'Times New Roman';
+}
+
+input,
+textarea {
+    padding: 5px 10px;
+    border: 0;
+    border-radius: 3px;
+    font-family: 'Times New Roman';
+}
+
+input {
+    width: 60%;
+    margin: 10px 0;
+    height: 26px;
+    padding-right: 0;
+}
+
+img, button {
+    cursor: pointer;
+}
+
+.error {
+    border: 1px solid #ff0000;
+    background-color: #ffeaea;
+}
+
+#auth_wrapper.no-auth #auth,
+#events_wrapper #settable_event {
+    position: relative;
+    width: 40%;
+    margin: 10% auto;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: #4682b4;
+    background-color: #add8e6;
+    font-size: 20px;
+}
+
+#auth_wrapper #sign_out:hover,
+#events_wrapper #show_event_overlay:hover {
+    border-radius: 10px;
+    background-color: rgba(255,160,122, 0.5);
+}
+
+#auth_wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#auth_wrapper:not(.no-auth) #auth,
+#auth_wrapper.no-auth #sign_out,
+#auth_wrapper.no-auth ~ #events_wrapper {
+    display: none;
+}
+
+#auth_wrapper #auth_error {
+    display: block;
+    margin: 6px;
+    color: #ff0000;
+    white-space: pre-line;
+}
+
+#auth_wrapper #auth input {
+    display: block;
+    margin: 15px auto;
+    height: 50px;
+    width: 250px;
+    font-size: 20px;
+}
+
+#auth_wrapper #sign_out {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    width: 70px;
+    z-index: 90;
+}
+
+#auth_wrapper .auth-button {
+    display: inline-block;
+    width: 30%;
+    height: 50px;
+    margin: 10px 5px;
+    font-size: 16px;
+    background-color: #bb9edc;
+    color: #3c3c3c;
+}
+
+#events_wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    overflow-y: auto;
+}
+
+#events_wrapper #event_overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 100;
+}
+
+#events_wrapper #settable_event {
+    width: 50%;
+    text-align: left;
+}
+
+#events_wrapper #settable_event > * {
+    font-size: 20px;
+    color: #4682b4;
+    white-space: pre-line;
+}
+
+#events_wrapper #settable_event .datetime input {
+    display: inline-block;
+    width: 35%;
+    margin-left: 5px;
+}
+
+#events_wrapper #settable_event textarea {
+    display: block;
+    width: calc(100% - 20px);
+    height: 250px;
+    resize: none;
+}
+
+#events_wrapper #settable_event .close-button {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+}
+
+#events_wrapper #settable_event .close-button:hover {
+    color: #ff0000;
+    cursor: pointer;
+}
+
+#events_wrapper #settable_event #set_event {
+    width: 60px;
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+}
+
+#events_wrapper #event_message {
+    color: #b22222;
+}
+
+#events_wrapper .event-card {
+    position: relative;
+    display: inline-block;
+    width: 60%;
+    margin: 15px auto;
+    padding: 17px 10px 10px;
+    text-align: left;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,0.7);
+    word-wrap: break-word;
+}
+
+#events_wrapper .event-card.chosen {
+    background-color: #ffc0cb;
+}
+
+#events_wrapper .event-card .datetime {
+    padding: 0 10px;
+}
+
+#events_wrapper .event-card .datetime div {
+    display: inline-block;
+}
+
+#events_wrapper .event-card .event-title {
+    width: 80%;
+    font-size: 18px;
+    color: #8a2be2;
+    margin: 10px auto;
+    text-align: center;
+}
+
+#events_wrapper .event-card .event-note {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 10px;
+    max-height: 170px;
+    overflow-y: auto;
+    white-space: pre-line;
+}
+
+#events_wrapper .event-card .button-block {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+}
+
+#events_wrapper .event-card .button-block img {
+    width: 26px;
+    margin-left: 5px;
+}
+
+#events_wrapper #show_event_overlay {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    width: 80px;
+}
+
+#event_filter {
+    position: relative;
+    width: 45%;
+    min-width: 600px;
+    margin: 5px auto;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: left;
+    background-color: rgba(184,0,177,0.3);
+}
+
+#event_filter .filter-block {
+    margin: 10px 20px;
+}
+
+#event_filter input {
+    height: 15px;
+    width: 140px;
+    margin: 0 5px;
+}
+
+#event_filter input[type="text"] {
+    width: 314px;
+}
+
+#event_filter select {
+    height: 25px;
+    width: 100px;
+    margin-left: 10px;
+    background-color: #fff;
+}
+
+#event_filter .filter-button {
+    position: absolute;
+    right: 20px;
+    height: 24px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+#event_filter .filter-button.clicked {
+    background-color: #add8e6;
+}

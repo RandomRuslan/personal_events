@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+
+  flask:
+    build:
+      context: './flask'
+    volumes:
+      - './flask/source:/src'
+    working_dir: '/src'
+    command: sh -c "pip install -r requirements.txt && python server.py"
+    network_mode: host
+    depends_on:
+      - sql
+
+
+  sql:
+    build:
+      context: './sql'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: 'personal_events'
+    ports:
+      - '5432:5432'
+
+volumes:
+  db-data:
+    driver: local
