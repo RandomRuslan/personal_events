@@ -5,6 +5,7 @@ html, body {
     overflow: hidden;
     color: #000;
     background-image: radial-gradient(ellipse farthest-corner at right bottom, #adc0ce 0%, #b88eec 50%, #e4e4e4 100%);
+    font-family: 'Times New Roman';
 }
 
 input,
@@ -12,6 +13,7 @@ textarea {
     padding: 5px 10px;
     border: 0;
     border-radius: 3px;
+    font-family: 'Times New Roman';
 }
 
 input {
@@ -120,7 +122,6 @@ img, button {
 
 #events_wrapper #settable_event > * {
     font-size: 20px;
-    font-family: monospace;
     color: #4682b4;
     white-space: pre-line;
 }
@@ -222,7 +223,7 @@ img, button {
 #event_filter {
     position: relative;
     width: 45%;
-    min-width: 580px;
+    min-width: 600px;
     margin: 5px auto;
     padding: 10px 20px;
     border-radius: 5px;

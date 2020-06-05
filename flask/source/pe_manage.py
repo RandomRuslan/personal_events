@@ -125,7 +125,7 @@ class Manager:
                 try:
                     int(value)
                 except ValueError:
-                    error.append(f'{key} must be number')
+                    error.append(f'{get_readable_key(key)} must be number')
                     continue
 
             if not value:

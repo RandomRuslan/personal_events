@@ -241,7 +241,7 @@ let EventManager = {
                 this.eventMessage.text('New data is required');
                 return;
             }
-            data.ts = Date.parse(data.date + '@' + data.time)/1000;
+            data.ts = Date.parse(data.date + ' ' + data.time)/1000;
             data.tz = new Date().getTimezoneOffset() / 60;
             delete data.date;
             delete data.time;
@@ -445,8 +445,8 @@ let EventFilter = {
                             this.toInput.val(toDate);
                         }
 
-                        let fromTs = Date.parse(fromDate + '@00:00:00')/1000;
-                        let toTs = Date.parse(toDate + '@23:59:59')/1000;
+                        let fromTs = Date.parse(fromDate + ' 00:00:00')/1000;
+                        let toTs = Date.parse(toDate + ' 23:59:59')/1000;
 
                         if (ts < fromTs || toTs < ts) {
                             card.hide();
